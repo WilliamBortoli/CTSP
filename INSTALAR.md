@@ -8,7 +8,7 @@ git clone https://github.com/WilliamBortoli/CTSP.git
 cd CTSP
 claude
 ```
-Primeira mensagem para o Claude: **"Leia PASSAGEM.md e continue de onde paramos."**
+Primeira mensagem para o Claude: **"Leia para-o-code/00-LEIA-PRIMEIRO.md e siga as etapas."**
 
 ## 2. Skills e plugins (digite dentro do Claude Code)
 | O quê | Comandos |
