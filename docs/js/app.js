@@ -118,7 +118,7 @@ function salvar(){ pendente = true; clearTimeout(salvarT); salvarT = setTimeout(
 function gravar(){
   clearTimeout(salvarT); if (!pendente || !ME || !API) return salvando; pendente = false;
   const copia = JSON.parse(JSON.stringify(D));
-  salvando = salvando.then(() => API.salvarProgresso(ME.id, copia)).catch(e => { pendente = true; toast('Não deu para salvar agora. ' + erroTexto(e).replace(/<[^>]+>/g, '')); setTimeout(gravar, 8000); });
+  salvando = salvando.then(() => API.salvarProgresso(ME.id, copia)).catch(e => { pendente = true; toast('Não deu para salvar agora. ' + erroTexto(e).replace(/<[^>]+>/g, '')); if (!/row-level security|permission denied|JWT/i.test(String(e && e.message))) setTimeout(gravar, 8000); });
   return salvando;
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') gravar(); });
@@ -627,7 +627,7 @@ function rPerfil(){
 
 /* ---- administradora: alunos ---- */
 let ALUNOS = [], ADM_SENHA = null, ADM_CONF = null, ADM_VER = null;
-const senhaProvisoria = () => 'ctsp-' + Math.floor(1000 + Math.random() * 9000);
+const senhaProvisoria = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789', r = crypto.getRandomValues(new Uint32Array(6)); return 'ctsp-' + Array.from(r, n => a[n % a.length]).join(''); };
 async function rAlunos(){
   $('#main').innerHTML = mtop() + '<div class="pnl"><span>Carregando alunos<span class="dots"></span></span></div>';
   try { ALUNOS = await API.listarAlunos(); } catch (e) { $('#main').innerHTML = mtop() + '<div class="err">' + ic('alert') + '<span>' + erroTexto(e) + '</span></div>'; return; }

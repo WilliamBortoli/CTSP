@@ -19,3 +19,10 @@ Cinquenta e dois de sessenta. Esse foi o corte de 2026. / O nosso preparatório 
 - Sempre responder em português.
 - Conteúdo jurídico verificado até out/2026; não inventar lei nem questão.
 - Site independente, sem vínculo oficial com a Brigada Militar.
+
+## Auditoria (ponytail-audit, 27/10)
+- Corrigido: senha provisória agora é aleatória de verdade (`crypto`, 6 caracteres); antes eram só 9.000 combinações.
+- Corrigido: progresso não fica tentando salvar em loop quando a conta é bloqueada.
+- Removido: CSS morto do antigo balão "roteiro de teste".
+- Testes: `testes/teste.js` (Playwright + API falsa `testes/mock.js`): `npx playwright install chromium`, sirva `docs/` (ex.: `python -m http.server 8765` dentro de docs) e rode `node testes/teste.js http://localhost:8765/ prints`.
+- Ruflo: não rodar `npx ruflo init` neste projeto sem decidir antes; ele instala automações em toda ação. Projeto pequeno não precisa.
