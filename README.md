@@ -4,7 +4,7 @@ Site de estudo para o CTSP 2027 (2º Sargento BM-RS), feito para o grupo da ROCA
 Cada colega entra com usuário e senha próprios; perfil e progresso ficam salvos na nuvem (Supabase),
 então dá para estudar no celular e continuar no computador.
 
-**Endereço do site:** https://williambortoli.github.io/ctsp/
+**Endereço do site:** https://williambortoli.github.io/CTSP/
 
 > Site de estudo independente, sem vínculo oficial com a Brigada Militar.
 
