@@ -1,0 +1,52 @@
+<template>
+  <style>
+    @font-face { font-family: "Chakra Petch"; src: url("assets/fonts/chakra-700.woff2") format("woff2"); font-weight: 700; }
+    @font-face { font-family: "Plus Jakarta Sans"; src: url("assets/fonts/jakarta-600.woff2") format("woff2"); font-weight: 600; }
+    #root { position: absolute; inset: 0; }
+    #final-mundo { position: absolute; inset: 0; overflow: hidden; clip-path: circle(0px at 185px 957px);
+      background-color: #100d08;
+      background-image:
+        radial-gradient(760px 620px at 50% 30%, rgba(222, 178, 82, 0.16), transparent 66%),
+        linear-gradient(rgba(222, 190, 120, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(222, 190, 120, 0.035) 1px, transparent 1px);
+      background-size: auto, 40px 40px, 40px 40px; }
+    #final-emblema { position: absolute; left: 390px; top: 300px; width: 300px; height: 300px; border-radius: 44px; overflow: hidden; box-shadow: 0 0 0 2px rgba(222, 190, 120, 0.35), 0 30px 60px rgba(0, 0, 0, 0.6); }
+    #final-emblema img { display: block; width: 300px; height: 300px; }
+    #final-nome { position: absolute; left: 0; top: 650px; width: 1080px; text-align: center; font: 700 96px/1.0 "Chakra Petch"; text-transform: uppercase; color: #f4efe4; }
+    #final-nome em { font-style: normal; color: #f4d78c; }
+    #final-cta { position: absolute; left: 0; top: 890px; width: 1080px; text-align: center; font: 600 52px "Plus Jakarta Sans"; color: #cfc5b2; }
+    #final-link { position: absolute; left: 0; top: 965px; width: 1080px; text-align: center; font: 700 58px "Chakra Petch"; color: #f4d78c; letter-spacing: -0.01em; }
+    #final-aviso { position: absolute; left: 160px; top: 1180px; width: 760px; text-align: center; font: 600 32px/1.4 "Plus Jakarta Sans"; color: #a89c84; }
+    #final-divisas { position: absolute; left: 260px; top: 1440px; width: 560px; height: 380px; }
+  </style>
+  <div id="root" data-composition-id="final" data-width="1080" data-height="1920">
+    <div id="final-mundo">
+      <div id="final-emblema"><img id="final-emblema-img" src="assets/img/emblema.jpg" alt="Emblema do Preparatório CTSP" /></div>
+      <div id="final-nome">Preparatório<br><em>CTSP</em></div>
+      <div id="final-cta">Peça seu acesso:</div>
+      <div id="final-link">williambortoli.github.io/CTSP</div>
+      <div id="final-aviso">Sem vínculo oficial com a Brigada Militar.</div>
+      <svg id="final-divisas" viewBox="0 0 560 380" data-layout-ignore>
+        <g fill="none" stroke="#deb252" stroke-width="44" stroke-linejoin="miter">
+          <polyline points="30,140 280,30 530,140" />
+          <polyline points="30,250 280,140 530,250" />
+          <polyline points="30,360 280,250 530,360" />
+        </g>
+      </svg>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // íris abre a partir da questão 7 do cartão-resposta
+    tl.fromTo("#final-mundo", { clipPath: "circle(0px at 185px 957px)" }, { clipPath: "circle(2300px at 185px 957px)", duration: 0.4, ease: "power3.in" }, 0);
+    // o emblema se revela de dentro para fora e assenta
+    tl.fromTo("#final-emblema", { clipPath: "circle(0% at 50% 50%)", scale: 1.25 }, { clipPath: "circle(75% at 50% 50%)", scale: 1, duration: 0.5, ease: "expo.out" }, 0.3);
+    // o nome entra varrendo da esquerda
+    tl.fromTo("#final-nome", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.4, ease: "power3.out" }, 0.48);
+    // chamada e link entram inteiros, por desfoque, e ficam parados até o fim
+    tl.fromTo("#final-cta", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0.7);
+    tl.fromTo("#final-link", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0.78);
+    tl.fromTo("#final-aviso", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, 0.6);
+    window.__timelines["final"] = tl;
+  </script>
+</template>

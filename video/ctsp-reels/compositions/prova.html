@@ -1,0 +1,26 @@
+<template>
+  <style>
+    @font-face { font-family: "Chakra Petch"; src: url("assets/fonts/chakra-700.woff2") format("woff2"); font-weight: 700; }
+    #root { position: absolute; inset: 0; }
+    #prova-titulo { position: absolute; left: 90px; top: 200px; width: 920px; font: 700 88px/1.02 "Chakra Petch"; text-transform: uppercase; color: #f4efe4; }
+    #prova-titulo .w { display: inline-block; margin-right: 0.22em; }
+    #prova-titulo em { font-style: normal; color: #f4d78c; }
+    #prova-topo { position: absolute; z-index: 2; left: 120px; top: 430px; width: 840px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55); border: 2px solid rgba(222, 190, 120, 0.22); }
+    #prova-cartao { position: absolute; z-index: 1; left: 120px; top: 782px; width: 840px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55); border: 2px solid rgba(222, 190, 120, 0.22); background: #141210; padding: 0; }
+    #prova-topo img, #prova-cartao img { display: block; width: 840px; height: auto; }
+  </style>
+  <div id="root" data-composition-id="prova" data-width="1080" data-height="1920">
+    <div id="prova-titulo"><span class="w" id="prova-w1">60</span><span class="w" id="prova-w2">questões,</span><br><em class="w" id="prova-w3">4 horas</em></div>
+    <div id="prova-topo"><img id="prova-topo-img" src="assets/img/prova-topo.png" alt="Prova completa: questão 7 de 60, relógio Restam 3:59:59" /></div>
+    <div id="prova-cartao"><img id="prova-cartao-img" src="assets/img/prova-cartao.png" alt="Cartão-resposta da prova completa" /></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // corte seco: a prova já está na tela; o título entra palavra a palavra e o cartão-resposta sobe por trás do relógio
+    ["#prova-w1", "#prova-w2", "#prova-w3"].forEach((w, i) => {
+      tl.fromTo(w, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0.06 + i * 0.067);
+    });
+    tl.fromTo("#prova-cartao", { y: -120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, 0.3);
+    window.__timelines["prova"] = tl;
+  </script>
+</template>

@@ -1,0 +1,36 @@
+<template>
+  <style>
+    @font-face { font-family: "Chakra Petch"; src: url("assets/fonts/chakra-700.woff2") format("woff2"); font-weight: 700; }
+    #root { position: absolute; inset: 0; }
+    #missao-titulo { position: absolute; left: 90px; top: 200px; width: 920px; font: 700 88px/1.02 "Chakra Petch"; text-transform: uppercase; color: #f4efe4; }
+    #missao-titulo .w { display: inline-block; margin-right: 0.22em; }
+    #missao-titulo em { font-style: normal; color: #f4d78c; }
+    #missao-janela { position: absolute; left: 90px; top: 430px; width: 900px; height: 880px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55); }
+    #missao-palco { position: absolute; left: 0; top: 0; width: 900px; }
+    #missao-palco img { display: block; width: 900px; height: auto; border-radius: 26px; }
+    #missao-lista { margin-top: 28px; }
+  </style>
+  <div id="root" data-composition-id="missao" data-width="1080" data-height="1920">
+    <div id="missao-titulo"><span class="w" id="missao-w1">Missão</span><span class="w" id="missao-w2">de</span><br><em class="w" id="missao-w3">cada dia</em></div>
+    <div id="missao-janela" data-layout-allow-overflow>
+      <div id="missao-palco">
+        <img id="missao-painel" src="assets/img/painel.png" alt="Painel do site: saudação e botão Começar missão de hoje" />
+        <img id="missao-lista" src="assets/img/missao.png" alt="Lista da missão de hoje no painel" />
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // entra em chicote vindo de baixo
+    tl.fromTo("#missao-janela", { y: 280, opacity: 0, filter: "blur(14px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 0);
+    // palavras do cinza para a tinta
+    ["#missao-w1", "#missao-w2", "#missao-w3"].forEach((w, i) => {
+      tl.fromTo(w, { opacity: 0.18 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, 0.1 + i * 0.09);
+    });
+    // a câmera desce do painel até a lista da missão
+    tl.fromTo("#missao-palco", { y: 0 }, { y: -818, duration: 0.6, ease: "power2.inOut" }, 0.85);
+    // troca por desfoque
+    tl.fromTo(["#missao-titulo", "#missao-janela"], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power2.in" }, 1.85);
+    window.__timelines["missao"] = tl;
+  </script>
+</template>

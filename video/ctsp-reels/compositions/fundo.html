@@ -1,0 +1,43 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0b0a08; }
+    #fundo-grade {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(900px 620px at 88% -6%, rgba(222, 178, 82, 0.11), transparent 62%),
+        radial-gradient(700px 520px at -10% 108%, rgba(229, 72, 77, 0.05), transparent 60%),
+        linear-gradient(rgba(222, 190, 120, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(222, 190, 120, 0.035) 1px, transparent 1px);
+      background-size: auto, auto, 40px 40px, 40px 40px;
+    }
+    #fundo-divisas { position: absolute; left: 260px; top: 1440px; width: 560px; height: 380px; }
+  </style>
+  <div id="root" data-composition-id="fundo" data-width="1080" data-height="1920">
+    <div id="fundo-grade"></div>
+    <svg id="fundo-divisas" viewBox="0 0 560 380" data-layout-ignore>
+      <defs>
+        <clipPath id="fundo-c1"><rect id="fundo-r1" x="0" y="0" width="0" height="380" /></clipPath>
+        <clipPath id="fundo-c2"><rect id="fundo-r2" x="0" y="0" width="0" height="380" /></clipPath>
+        <clipPath id="fundo-c3"><rect id="fundo-r3" x="0" y="0" width="0" height="380" /></clipPath>
+      </defs>
+      <g fill="none" stroke="rgba(222,178,82,0.16)" stroke-width="44" stroke-linejoin="miter">
+        <polyline points="30,140 280,30 530,140" />
+        <polyline points="30,250 280,140 530,250" />
+        <polyline points="30,360 280,250 530,360" />
+      </g>
+      <g fill="none" stroke="rgba(222,178,82,0.55)" stroke-width="44" stroke-linejoin="miter">
+        <polyline points="30,140 280,30 530,140" clip-path="url(#fundo-c1)" />
+        <polyline points="30,250 280,140 530,250" clip-path="url(#fundo-c2)" />
+        <polyline points="30,360 280,250 530,360" clip-path="url(#fundo-c3)" />
+      </g>
+    </svg>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // as divisas se enchem conforme o filme avança (progresso rumo a sargento)
+    tl.fromTo("#fundo-r1", { attr: { width: 0 } }, { attr: { width: 560 }, duration: 4, ease: "none" }, 2.2);
+    tl.fromTo("#fundo-r2", { attr: { width: 0 } }, { attr: { width: 560 }, duration: 4, ease: "none" }, 6.2);
+    tl.fromTo("#fundo-r3", { attr: { width: 0 } }, { attr: { width: 560 }, duration: 1.8, ease: "none" }, 10.2);
+    window.__timelines["fundo"] = tl;
+  </script>
+</template>

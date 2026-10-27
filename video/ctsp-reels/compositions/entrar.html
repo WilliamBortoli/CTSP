@@ -1,0 +1,26 @@
+<template>
+  <style>
+    @font-face { font-family: "Chakra Petch"; src: url("assets/fonts/chakra-700.woff2") format("woff2"); font-weight: 700; }
+    #root { position: absolute; inset: 0; }
+    #entrar-titulo { position: absolute; left: 90px; top: 200px; width: 920px; font: 700 88px/1.02 "Chakra Petch"; text-transform: uppercase; color: #f4efe4; }
+    #entrar-titulo .w { display: inline-block; margin-right: 0.22em; }
+    #entrar-titulo em { font-style: normal; color: #f4d78c; }
+    #entrar-cartao { position: absolute; left: 160px; top: 440px; width: 760px; height: 736px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55); border: 2px solid rgba(222, 190, 120, 0.22); }
+    #entrar-cartao img { display: block; width: 760px; height: auto; }
+  </style>
+  <div id="root" data-composition-id="entrar" data-width="1080" data-height="1920">
+    <div id="entrar-titulo"><span class="w" id="entrar-w1">O</span><span class="w" id="entrar-w2">preparatório</span><br><span class="w" id="entrar-w3">está</span><em class="w" id="entrar-w4">no ar.</em></div>
+    <div id="entrar-cartao"><img id="entrar-img" src="assets/img/entrar.png" alt="Tela de entrada do site Preparatório CTSP" /></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // a tela de entrada pousa vinda do placar
+    tl.fromTo("#entrar-cartao", { opacity: 0, scale: 1.1, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 0);
+    ["#entrar-w1", "#entrar-w2", "#entrar-w3", "#entrar-w4"].forEach((w, i) => {
+      tl.fromTo(w, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0.12 + i * 0.067);
+    });
+    // chicote para cima
+    tl.fromTo(["#entrar-titulo", "#entrar-cartao"], { y: 0, opacity: 1, filter: "blur(0px)" }, { y: -260, opacity: 0, filter: "blur(12px)", duration: 0.25, ease: "power3.in" }, 1.9);
+    window.__timelines["entrar"] = tl;
+  </script>
+</template>

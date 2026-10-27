@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #0b0a08; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1080" data-height="1920">
+      <div id="fundo" data-composition-id="fundo" data-composition-src="compositions/fundo.html" data-start="0" data-duration="15" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 1"></div>
+      <div id="hook" data-composition-id="hook" data-composition-src="compositions/hook.html" data-start="0" data-duration="2.2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="entrar" data-composition-id="entrar" data-composition-src="compositions/entrar.html" data-start="2.05" data-duration="2.15" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="missao" data-composition-id="missao" data-composition-src="compositions/missao.html" data-start="4.2" data-duration="2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="apostila" data-composition-id="apostila" data-composition-src="compositions/apostila.html" data-start="6.2" data-duration="1.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="questao" data-composition-id="questao" data-composition-src="compositions/questao.html" data-start="8" data-duration="2.2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="prova" data-composition-id="prova" data-composition-src="compositions/prova.html" data-start="10.2" data-duration="2.15" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 2"></div>
+      <div id="final" data-composition-id="final" data-composition-src="compositions/final.html" data-start="12" data-duration="3" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 3"></div>
+    </div>
+    <script>
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

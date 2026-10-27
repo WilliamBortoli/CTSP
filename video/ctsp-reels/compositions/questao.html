@@ -1,0 +1,37 @@
+<template>
+  <style>
+    @font-face { font-family: "Chakra Petch"; src: url("assets/fonts/chakra-700.woff2") format("woff2"); font-weight: 700; }
+    #root { position: absolute; inset: 0; }
+    #questao-titulo { position: absolute; left: 90px; top: 200px; width: 920px; font: 700 88px/1.02 "Chakra Petch"; text-transform: uppercase; color: #f4efe4; }
+    #questao-titulo .w { display: inline-block; margin-right: 0.22em; }
+    #questao-titulo em { font-style: normal; color: #f4d78c; }
+    #questao-janela { position: absolute; left: 140px; top: 430px; width: 800px; height: 880px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55); border: 2px solid rgba(222, 190, 120, 0.22); background: #141210; }
+    #questao-palco { position: absolute; left: 0; top: 0; width: 800px; }
+    #questao-palco img { position: absolute; left: 0; top: 0; display: block; width: 800px; height: auto; }
+    #questao-escuro { position: absolute; inset: 0; background: #000; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="questao" data-width="1080" data-height="1920">
+    <div id="questao-titulo"><span class="w" id="questao-w1">Corrige</span><span class="w" id="questao-w2">e</span><br><span class="w" id="questao-w3">explica</span><em class="w" id="questao-w4">na hora</em></div>
+    <div id="questao-janela" data-layout-allow-overflow>
+      <div id="questao-palco">
+        <img id="questao-a" src="assets/img/questao-a.png" alt="Questão sobre ronda e dormir em serviço, antes de responder" />
+        <img id="questao-b" src="assets/img/questao-b.png" alt="A mesma questão respondida: Vigilância correta, com explicação do art. 203" />
+      </div>
+    </div>
+    <div id="questao-escuro"></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // entra em chicote vindo de baixo, já no enunciado
+    tl.fromTo("#questao-janela", { y: 280, opacity: 0, filter: "blur(14px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 0);
+    ["#questao-w1", "#questao-w2", "#questao-w3", "#questao-w4"].forEach((w, i) => {
+      tl.fromTo(w, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0.1 + i * 0.067);
+    });
+    // o toque em Vigilância: a interface marca certo e mostra a explicação
+    tl.fromTo("#questao-b", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, 0.85);
+    tl.fromTo("#questao-palco", { y: -246 }, { y: -660, duration: 0.55, ease: "power2.inOut" }, 1.15);
+    // escurece 3 quadros antes do corte seco
+    tl.fromTo("#questao-escuro", { opacity: 0 }, { opacity: 0.4, duration: 0.1, ease: "none" }, 2.1);
+    window.__timelines["questao"] = tl;
+  </script>
+</template>
