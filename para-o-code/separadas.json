@@ -1,0 +1,21 @@
+[
+  {
+    "arq": "ppm-a.jsonl",
+    "linha": 33,
+    "motivo": "enunciado curto demais (validador exige 10+)",
+    "topico": "ppm-t5",
+    "nivel": 1,
+    "assunto": "Sigilo do IPM",
+    "enunciado": "O IPM é:",
+    "alternativas": [
+      "Sigiloso",
+      "Público",
+      "Aberto a qualquer pessoa",
+      "Publicado no boletim",
+      "Transmitido"
+    ],
+    "correta": 0,
+    "explicacao": "O IPM é sigiloso, mas o encarregado pode permitir que o advogado do indiciado tome conhecimento (art. 16).",
+    "fundamento": "CPPM, art. 16"
+  }
+]
