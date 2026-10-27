@@ -225,3 +225,6 @@ grant execute on function public.existe_admin() to anon, authenticated;
 grant execute on function public.eh_admin(), public.eh_ativo() to authenticated;
 grant execute on function public.admin_criar_aluno(text, text, text, text, text, text, text),
   public.admin_redefinir_senha(uuid, text), public.admin_excluir_aluno(uuid) to authenticated;
+revoke execute on function public.admin_criar_aluno(text, text, text, text, text, text, text),
+  public.admin_redefinir_senha(uuid, text), public.admin_excluir_aluno(uuid),
+  public.eh_admin(), public.eh_ativo() from public, anon;

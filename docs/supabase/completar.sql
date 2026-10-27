@@ -73,3 +73,8 @@ end $$;
 
 grant update, delete on public.perfis, public.progresso to authenticated;
 grant execute on function public.admin_redefinir_senha(uuid, text), public.admin_excluir_aluno(uuid) to authenticated;
+
+-- Quem não entrou no site não precisa chamar estas funções (a criação da administradora continua liberada).
+revoke execute on function public.admin_criar_aluno(text, text, text, text, text, text, text),
+  public.admin_redefinir_senha(uuid, text), public.admin_excluir_aluno(uuid),
+  public.eh_admin(), public.eh_ativo() from public, anon;
