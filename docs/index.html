@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Preparatório CTSP</title>
+<meta name="description" content="Estudo para o CTSP da Brigada Militar do RS: apostilas, plano semanal, simulados e caderno de erros.">
+<meta name="theme-color" content="#08080A">
+<link rel="icon" href="assets/emblema.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/apostila.css">
+<link rel="stylesheet" href="assets/extra.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 1 2-2h13v2H6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M6 16a3.5 3.5 0 0 1 6 0M14 10h4M14 13h4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 2 1.5 3 2.5 3 0-3-1-5 0-8z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="15" r="5"/><path d="M8.5 11 6 3h4l2 4 2-4h4l-2.5 8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14a5 5 0 0 1 5 5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 17l-5-5 5-5M5 12h11"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+</svg>
+
+
+<!-- ===== 1. entrar ===== -->
+<section class="view" id="v-entrar" hidden>
+  <div class="auth">
+    <div class="hero"><div class="emb"></div><div class="fade"></div>
+      <div class="txt">
+        <h1>Sua farda de <em>sargento</em><br>começa aqui.</h1>
+        <p>Apostilas diretas, questões no padrão Fundatec e um plano que acompanha o seu desempenho. Cada aluno tem o próprio perfil e o próprio progresso.</p>
+        <div class="feat"><span><svg class="i"><use href="#i-book"/></svg>7 matérias</span><span><svg class="i"><use href="#i-target"/></svg>Simulados em 3 níveis</span><span><svg class="i"><use href="#i-shield"/></svg>Progresso salvo na nuvem</span></div>
+      </div>
+    </div>
+    <div class="formside"><form class="box" id="f-login" novalidate>
+      <div class="mobilelogo" aria-hidden="true"></div>
+      <div class="kick">Portal do aluno · CTSP 2027</div>
+      <h2>Entrar</h2>
+      <div id="login-msg"></div>
+      <div class="field"><label for="l-user">Usuário</label><div class="inp"><svg class="i"><use href="#i-user"/></svg><input id="l-user" autocomplete="username" autocapitalize="none" spellcheck="false"></div></div>
+      <div class="field"><label for="l-pass">Senha</label><div class="inp"><svg class="i"><use href="#i-lock"/></svg><input id="l-pass" type="password" autocomplete="current-password"></div></div>
+      <button class="btn gold" type="submit" id="l-btn">Entrar no portal <svg class="i"><use href="#i-arrow"/></svg></button>
+      <div class="small">Ainda não tem acesso? Peça o seu usuário à administradora do grupo.</div>
+      <button type="button" class="adminlink" data-go="primeiro" id="l-primeiro" hidden><svg class="i" style="width:15px;height:15px"><use href="#i-key"/></svg>Primeiro acesso: configurar a administradora</button>
+      <p class="aviso">Site de estudo independente, sem vínculo oficial com a Brigada Militar.</p>
+    </form></div>
+  </div>
+</section>
+
+<!-- ===== 2. primeiro acesso (cria a administradora) ===== -->
+<section class="view" id="v-primeiro" hidden>
+  <div class="auth">
+    <div class="hero"><div class="emb"></div><div class="fade"></div><div class="txt"><h1>Área da <em>administradora</em>.</h1><p>Esta conta cria os acessos dos colegas, acompanha o desempenho de cada um e também estuda normalmente.</p></div></div>
+    <div class="formside"><form class="box" id="f-primeiro" novalidate>
+      <div class="kick">Primeiro acesso</div>
+      <h2>Criar a administradora</h2>
+      <div id="p1-msg"></div>
+      <div class="field"><label for="a-codigo">Código de instalação</label><div class="inp"><svg class="i"><use href="#i-key"/></svg><input id="a-codigo" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ROCAM-XXXX-XXXX"></div><span class="hint">Pedido só uma vez, para ninguém mais criar a administradora.</span></div>
+      <div class="field"><label for="a-nome">Nome completo</label><div class="inp"><svg class="i"><use href="#i-id"/></svg><input id="a-nome" autocomplete="name"></div></div>
+      <div class="field"><label for="a-guerra">Nome de guerra</label><div class="inp"><svg class="i"><use href="#i-medal"/></svg><span class="fixo">SD PM</span><input id="a-guerra"></div></div>
+      <div class="field"><label for="a-user">Usuário</label><div class="inp"><svg class="i"><use href="#i-user"/></svg><input id="a-user" autocomplete="username" autocapitalize="none" spellcheck="false"></div><span class="hint">Letras minúsculas, números, ponto ou traço. Sem espaços.</span></div>
+      <div class="row2">
+        <div class="field"><label for="a-pass">Senha</label><div class="inp"><svg class="i"><use href="#i-lock"/></svg><input id="a-pass" type="password" autocomplete="new-password" placeholder="mínimo 6 caracteres"></div></div>
+        <div class="field"><label for="a-pass2">Repita a senha</label><div class="inp"><svg class="i"><use href="#i-lock"/></svg><input id="a-pass2" type="password" autocomplete="new-password"></div></div>
+      </div>
+      <button class="btn gold" type="submit" id="a-btn">Criar e entrar <svg class="i"><use href="#i-check"/></svg></button>
+      <div class="small"><button type="button" class="link" data-go="entrar">Voltar para o login</button></div>
+    </form></div>
+  </div>
+</section>
+
+<!-- ===== 3. trocar a senha provisória ===== -->
+<section class="view" id="v-trocar" hidden>
+  <div class="auth">
+    <div class="hero"><div class="emb"></div><div class="fade"></div><div class="txt"><h1>Crie a sua <em>senha</em>.</h1><p>Você entrou com a senha provisória que recebeu. Agora escolha uma senha só sua.</p></div></div>
+    <div class="formside"><form class="box" id="f-trocar" novalidate>
+      <div class="mobilelogo" aria-hidden="true"></div>
+      <div class="kick">Primeiro login</div>
+      <h2 id="t-ola">Nova senha</h2>
+      <div id="t-msg"></div>
+      <div class="field"><label for="t-pass">Nova senha</label><div class="inp"><svg class="i"><use href="#i-lock"/></svg><input id="t-pass" type="password" autocomplete="new-password" placeholder="mínimo 6 caracteres"></div></div>
+      <div class="field"><label for="t-pass2">Repita a nova senha</label><div class="inp"><svg class="i"><use href="#i-lock"/></svg><input id="t-pass2" type="password" autocomplete="new-password"></div></div>
+      <button class="btn gold" type="submit" id="t-btn">Salvar e entrar <svg class="i"><use href="#i-arrow"/></svg></button>
+      <div class="small"><button type="button" class="link" data-sair>Sair</button></div>
+    </form></div>
+  </div>
+</section>
+
+<!-- ===== 4. app ===== -->
+<section class="view" id="v-app" hidden>
+<div class="app">
+  <aside class="side">
+    <div class="logo"><div class="em"></div><div><b>Preparatório CTSP</b><small>BRIGADA MILITAR · RS</small></div></div>
+    <button class="nv" data-tab="painel"><svg class="i"><use href="#i-home"/></svg>Painel</button>
+    <button class="nv" data-tab="plano"><svg class="i"><use href="#i-cal"/></svg>Plano semanal</button>
+    <button class="nv" data-tab="materias"><svg class="i"><use href="#i-book"/></svg>Matérias</button>
+    <button class="nv" data-tab="simulado"><svg class="i"><use href="#i-target"/></svg>Simulado</button>
+    <button class="nv" data-tab="erros"><svg class="i"><use href="#i-alert"/></svg>Caderno de erros<span class="b" data-nerros hidden></span></button>
+    <div class="sep"></div>
+    <button class="nv" data-tab="perfil"><svg class="i"><use href="#i-user"/></svg>Meu perfil</button>
+    <button class="nv" data-tab="alunos" data-admin hidden><svg class="i"><use href="#i-users"/></svg>Alunos</button>
+    <div class="me"><button type="button" class="avatar" data-foto id="me-ph" aria-label="Trocar foto de perfil"></button><div style="min-width:0"><b id="me-nome">—</b><small id="me-unid">—</small></div><button class="out" data-sair title="Sair" aria-label="Sair"><svg class="i"><use href="#i-logout"/></svg></button></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<nav class="tabbar" aria-label="Seções">
+  <button class="tb" data-tab="painel"><svg class="i"><use href="#i-home"/></svg>Painel</button>
+  <button class="tb" data-tab="plano"><svg class="i"><use href="#i-cal"/></svg>Plano</button>
+  <button class="tb" data-tab="materias"><svg class="i"><use href="#i-book"/></svg>Matérias</button>
+  <button class="tb" data-tab="simulado"><svg class="i"><use href="#i-target"/></svg>Simulado</button>
+  <button class="tb" data-mais><svg class="i"><use href="#i-more"/></svg>Mais<span class="b" data-nerros hidden></span></button>
+</nav>
+</section>
+
+<div class="carregando" id="carregando"><div class="em"></div><span>Carregando<span class="dots"></span></span></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/conteudo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
