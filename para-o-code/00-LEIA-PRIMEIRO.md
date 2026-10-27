@@ -4,7 +4,7 @@ Siga os arquivos em ordem. Cada um diz o que fazer, como conferir e quando parar
 
 | # | Arquivo | Objetivo |
 |---|---|---|
-| 1 | 01-preparar-ambiente.md | Skills, Supabase conectado, testes rodando |
+| 1 | 01-preparar-ambiente.md | Programas, projeto, skills (nossos repositórios), Supabase e testes |
 | 2 | 02-importar-questoes.md | Trazer as 2.000+ questões do programa do Windows |
 | 3 | 03-integrar-material.md | Juntar apostilas/exercícios do programa com o site |
 | 4 | 04-video-narracao.md | Narração, legenda e trilha no Reels |
