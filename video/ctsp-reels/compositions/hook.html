@@ -23,9 +23,9 @@
       tl.fromTo(w, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0.25 + i * 0.067);
     });
     // saída: o placar avança pela câmera (zoom através) e o resto some com desfoque
-    tl.fromTo(["#hook-kick", "#hook-linha"], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power2.in" }, 1.85);
-    tl.fromTo("#hook-num-z", { scale: 1, filter: "blur(0px)" }, { scale: 4.2, filter: "blur(18px)", duration: 0.34, ease: "power3.in", transformOrigin: "40% 50%" }, 1.85);
-    tl.fromTo("#hook-num", { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in" }, 2.05);
+    tl.fromTo(["#hook-kick", "#hook-linha"], { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power2.in" }, 3.75);
+    tl.fromTo("#hook-num-z", { scale: 1, filter: "blur(0px)" }, { scale: 4.2, filter: "blur(18px)", duration: 0.34, ease: "power3.in", transformOrigin: "40% 50%" }, 3.75);
+    tl.fromTo("#hook-num", { opacity: 1 }, { opacity: 0, duration: 0.14, ease: "power2.in" }, 3.95);
     window.__timelines["hook"] = tl;
   </script>
 </template>

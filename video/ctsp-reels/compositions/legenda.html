@@ -1,0 +1,35 @@
+<template>
+  <style>
+    @font-face { font-family: "Plus Jakarta Sans"; src: url("assets/fonts/jakarta-700.woff2") format("woff2"); font-weight: 700; }
+    #root { position: absolute; inset: 0; }
+    .leg { position: absolute; left: 0; top: 1580px; width: 1080px; text-align: center; opacity: 0; }
+    .leg span { display: inline-block; padding: 14px 30px; border-radius: 18px; background: rgba(11, 10, 8, 0.72); font: 700 60px/1.15 "Plus Jakarta Sans"; color: #f4efe4; }
+  </style>
+  <div id="root" data-composition-id="legenda" data-width="1080" data-height="1920" data-layout-allow-overlap>
+    <div class="leg" id="l0" data-ini="0.1" data-fim="1.6"><span>52 de 60.</span></div>
+    <div class="leg" id="l1" data-ini="1.8" data-fim="4.1"><span>Esse foi o corte de 2026.</span></div>
+    <div class="leg" id="l2" data-ini="4.15" data-fim="5.2"><span>O nosso preparatório</span></div>
+    <div class="leg" id="l3" data-ini="5.2" data-fim="6.7"><span>do CTSP está no ar.</span></div>
+    <div class="leg" id="l4" data-ini="6.9" data-fim="8.5"><span>Missão de estudo todo dia,</span></div>
+    <div class="leg" id="l5" data-ini="8.6" data-fim="10.15"><span>as sete apostilas do edital,</span></div>
+    <div class="leg" id="l6" data-ini="10.2" data-fim="11.2"><span>questão que corrige</span></div>
+    <div class="leg" id="l7" data-ini="11.2" data-fim="12.2"><span>e explica na hora,</span></div>
+    <div class="leg" id="l8" data-ini="12.25" data-fim="13.5"><span>e prova completa:</span></div>
+    <div class="leg" id="l9" data-ini="13.55" data-fim="14.7"><span>60 questões,</span></div>
+    <div class="leg" id="l10" data-ini="14.7" data-fim="15.65"><span>4 horas.</span></div>
+    <div class="leg" id="l11" data-ini="15.8" data-fim="16.9"><span>Pede teu acesso.</span></div>
+    <div class="leg" id="l12" data-ini="16.95" data-fim="18.5"><span>Bora passar desse corte!</span></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // tempos tirados da transcrição da narração (assets/audio/narracao.mp3)
+    document.querySelectorAll("#root .leg").forEach((g) => {
+      const ini = +g.dataset.ini, fim = +g.dataset.fim;
+      tl.set(g, { visibility: "visible" }, ini);
+      tl.fromTo(g, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }, ini);
+      tl.to(g, { opacity: 0, duration: 0.1, ease: "power2.in" }, fim - 0.1);
+      tl.set(g, { opacity: 0, visibility: "hidden" }, fim);
+    });
+    window.__timelines["legenda"] = tl;
+  </script>
+</template>
