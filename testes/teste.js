@@ -51,6 +51,9 @@ const ok = (c, m) => { if (!c) { falhas.push(m); console.log('FALHOU:', m); } el
     await tab('plano'); await p.waitForSelector('.sem.agora');
     ok(await p.locator('.sem').count() === 26, nome + ': 26 semanas no plano');
     await shot('04-plano');
+    await p.click('[data-praticar="real2026"]'); await p.waitForSelector('.cartao');
+    ok(await p.locator('.cel').count() === 60, nome + ': prova real 2026 com 60 questões');
+    await p.click('#q-entregar'); await p.waitForSelector('#q-sim'); await p.click('#q-sim'); await p.waitForSelector('.tbl-mat');
 
     // matérias e busca
     await tab('materias'); await p.fill('#busca', 'deserção'); await p.waitForTimeout(150);

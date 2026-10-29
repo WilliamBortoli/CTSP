@@ -179,6 +179,8 @@ async function prepararEntrada(){
   if (!API) { msg('#login-msg', 'err', 'Site ainda não configurado: falta preencher o endereço e a chave do Supabase no arquivo js/config.js (veja o LEIA-ME).'); return; }
   try { $('#l-primeiro').hidden = await API.existeAdmin(); } catch (e) { /* sem banco ainda */ }
 }
+try { $('#l-user').value = localStorage.getItem('ctsp-usuario') || ''; } catch (e) { /* sem armazenamento */ }
+$('#l-olho').addEventListener('click', () => { const p = $('#l-pass'), ver = p.type === 'password'; p.type = ver ? 'text' : 'password'; const b = $('#l-olho'); b.classList.toggle('on', ver); b.setAttribute('aria-pressed', ver); b.setAttribute('aria-label', ver ? 'Esconder senha' : 'Mostrar senha'); });
 $('#f-login').addEventListener('submit', async e => {
   e.preventDefault();
   if (!API) return prepararEntrada();
@@ -186,7 +188,7 @@ $('#f-login').addEventListener('submit', async e => {
   if (!u || !p) return msg('#login-msg', 'err', 'Preencha usuário e senha.');
   if (!validoUsuario(u)) return msg('#login-msg', 'err', 'Usuário inválido: use letras minúsculas, números, ponto ou traço.');
   const b = $('#l-btn'); ocupado(b, true, 'Entrando');
-  try { const id = await API.entrar(u, p); msg('#login-msg'); $('#l-pass').value = ''; await iniciarSessao(id); }
+  try { const id = await API.entrar(u, p); msg('#login-msg'); $('#l-pass').value = ''; try { localStorage.setItem('ctsp-usuario', u); } catch (e) { /* sem armazenamento */ } await iniciarSessao(id); }
   catch (er) { msg('#login-msg', 'err', erroTexto(er)); }
   ocupado(b, false);
 });
@@ -398,7 +400,7 @@ function rPlano(){
       return '<div class="sem' + (agora ? ' agora' : '') + (p.fim < d && !agora ? ' passou' : '') + '"><div class="top"><b>Semana ' + esc(p.s) + (agora ? ' · agora' : '') + '</b><span>' + dm(p.ini) + ' a ' + dm(p.fim) + ' · ' + esc(p.tipo) + (ts.length ? ' · ' + dd + '/' + ts.length : '') + '</span></div>' +
         (p.txt ? '<p>' + esc(p.txt) + '</p>' : '') + (ts.length ? '<div class="chips">' + ts.map(chip).join('') + '</div>' : '') +
         (p.m.length ? '<div class="chips">' + p.m.map(m => '<button class="chip" data-praticar="' + m + '">' + ic('target') + 'Treinar ' + esc(NOMES[m] || m) + '</button>').join('') + '</div>' : '') +
-        (p.links.length ? '<div class="chips">' + p.links.map(l => '<a class="chip" href="' + esc(l[1]) + '" target="_blank" rel="noopener">' + ic('link') + esc(l[0]) + '</a>').join('') + '</div>' : '') + '</div>'; }).join('') + '</div>';
+        (p.links.length ? '<div class="chips">' + (p.links.some(l => /^Prova CTSP\/2026/.test(l[0])) ? '<button class="chip" data-praticar="real2026">' + ic('target') + 'Fazer a prova 2026 aqui (4h, corrige sozinho)</button>' : '') + p.links.map(l => '<a class="chip" href="' + esc(l[1]) + '" target="_blank" rel="noopener">' + ic('link') + esc(l[0]) + '</a>').join('') + '</div>' : '') + '</div>'; }).join('') + '</div>';
   const atual = document.querySelector('.sem.agora'); if (atual && C.plano.indexOf(w) > 1) setTimeout(() => atual.scrollIntoView({block: 'start'}), 50);
 }
 
@@ -481,6 +483,13 @@ function rLeitor(){
 function praticar(alvo){
   if (!BANCO.length) { toast('O banco de questões ainda não carregou.'); return; }
   SIM = null;
+  if (alvo === 'real2026') {
+    const qs = BANCO.filter(q => q.origem === 'prova-2026');
+    if (!qs.length) return toast('A prova de 2026 não está no banco.');
+    SIM = {qs, resp: qs.map(() => null), i: 0, ini: Date.now(), fim: null, nome: 'Prova CTSP 2026 (real)', modo: 'final', prova: true, confirmar: false};
+    ABA = 'simulado'; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === 'simulado'));
+    rQuestao(); scrollTo(0, 0); return;
+  }
   if (alvo === 'fraca') { const f = stats().fraca; SCFG.mat = f.id; SCFG.nivel = '0'; SCFG.qtd = 10; SCFG.modo = 'imediato'; return iniciar(); }
   if (MAT[alvo]) { SCFG.mat = alvo; SCFG.nivel = '0'; SCFG.qtd = 10; SCFG.modo = 'imediato'; }
   aba('simulado');
@@ -492,7 +501,7 @@ function rSimulado(){
   $('#main').innerHTML = mtop() + '<div class="pnl"><div class="ph2"><h3>' + ic('target') + 'Montar simulado</h3><span class="hint">' + BANCO.length + ' questões no banco</span></div>' +
     '<div class="cfg"><div class="field"><label for="s-mat">Matéria</label><div class="inp">' + ic('book') + '<select id="s-mat">' + opts + '</select></div></div>' +
     '<div class="field"><label for="s-qtd">Quantidade</label><div class="inp">' + ic('list') + '<select id="s-qtd"' + (prova ? ' disabled' : '') + '>' + [5, 10, 20, 30].map(n => '<option' + (SCFG.qtd === n ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div></div>' +
-    '<div class="field"><label>Disponível</label><div class="inp"><span id="s-disp" style="font-weight:600"></span></div></div></div>' +
+    '<p class="hint" id="s-disp" style="grid-column:1/-1;margin:0"></p></div>' +
     '<div class="niv">' + ['1', '2', '3'].map(n => '<button class="nivc' + (SCFG.nivel === n ? ' on' : '') + '" data-niv="' + n + '"><b>' + NIV[n][0] + '</b><span>' + NIV[n][1] + '</span></button>').join('') + '</div>' +
     '<button class="nivc' + (SCFG.nivel === '0' ? ' on' : '') + '" data-niv="0" style="flex-direction:row;align-items:center;gap:10px"><b style="font-size:14px">Misturar níveis</b><span>recomendado</span></button>' +
     '<div class="modo"><button class="nivc' + (SCFG.modo === 'imediato' && !prova ? ' on' : '') + '" data-modo="imediato"' + (prova ? ' disabled' : '') + '><b style="font-size:14px">Corrigir a cada questão</b><span>Vê a explicação na hora</span></button><button class="nivc' + (SCFG.modo === 'final' || prova ? ' on' : '') + '" data-modo="final"><b style="font-size:14px">Corrigir no final</b><span>' + (prova ? 'Como na prova: 4 horas' : 'Treina o ritmo da prova') + '</span></button></div>' +
