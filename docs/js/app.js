@@ -464,7 +464,7 @@ const APO_ICO = {
 function rLeitor(){
   const m = MAT[LEITOR], s = stats(), st = s.pm[m.id], dom = m.tops.filter(t => D.dom[t.id]).length;
   const nq = BANCO.filter(q => q.mat === m.id).length;
-  const tact = t => '<div class="tact"><span class="lab">Tópico ' + esc(t.n) + '</span><button class="domb" data-dom="' + t.id + '" aria-pressed="' + (D.dom[t.id] ? 'true' : 'false') + '"><span class="ck">✓</span><span>' + (D.dom[t.id] ? 'Dominado' : 'Dominei') + '</span></button>' + (nq ? '<button class="btn ghost sm" data-praticar="' + m.id + '">' + ic('target') + 'Questões de ' + esc(m.nomeCurto) + '</button>' : '') + '</div>';
+  const tact = t => '<div class="tact"><span class="lab">Tópico ' + esc(t.n) + '</span><button class="domb" data-dom="' + t.id + '" aria-pressed="' + (D.dom[t.id] ? 'true' : 'false') + '"><span class="ck">✓</span><span>' + (D.dom[t.id] ? 'Dominado' : 'Dominei') + '</span></button>' + (nq ? '<button class="btn ghost sm" data-praticar="' + m.id + '">' + ic('target') + 'Questões de ' + esc(m.nomeCurto) + '</button>' : '') + '<button class="btn ghost sm" data-ir="rev-' + m.id + '" data-video>' + ic('play') + 'Revisar em vídeo</button></div>';
   $('#main').innerHTML = mtop() + '<div><button class="btn ghost sm" data-tab="materias" id="voltar-mat">' + ic('back') + 'Matérias</button></div>' +
     '<div class="leitor-hd"><div class="kick">Apostila · ' + m.q + ' questões na prova · mínimo ' + m.min + '</div><h1>' + m.h1 + '</h1><p class="lede">' + esc(m.lede) + '</p>' +
     '<div class="tagrow"><span class="tg">' + ic('book') + dom + '/' + m.tops.length + ' tópicos dominados</span><span class="tg">' + ic('target') + (st.tot ? pct(st.ok, st.tot) + '% de acerto' : 'sem questões feitas') + '</span>' + (nq ? '<button class="btn gold sm" data-praticar="' + m.id + '">' + ic('play') + 'Simulado desta matéria</button>' : '') + '</div>' +
@@ -475,7 +475,12 @@ function rLeitor(){
       '<section class="topic" id="quiz-' + m.id + '"><div class="sec-title"><h2>Mini-teste</h2><span class="ln"></span></div><div class="mis">' + (m.quiz || []).map((q, i) => '<div class="mq"><p>' + esc(q[0]) + '</p><div><button class="btn ghost sm" data-mq="' + i + '">Ver resposta</button></div><p class="ans" id="mq-' + i + '" hidden>' + esc(q[1]) + '</p></div>').join('') + '</div></section></div>';
   document.querySelectorAll('#main [data-ico]').forEach(el => { if (!el.querySelector('svg')) el.insertAdjacentHTML('afterbegin', APO_ICO[el.dataset.ico] || ''); });
   $('#voltar-mat').addEventListener('click', e => { e.stopPropagation(); LEITOR = null; aba('materias'); });
-  document.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => { const el = document.getElementById(b.dataset.ir); if (el) el.scrollIntoView({block: 'start'}); }));
+  document.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => {
+    const el = document.getElementById(b.dataset.ir); if (!el) return;
+    const v = b.hasAttribute('data-video') && el.querySelector('video');
+    if (v && v.hidden) return toast('Vídeo indisponível sem internet.');
+    el.scrollIntoView({block: 'start'}); if (v) v.play().catch(() => {});
+  }));
   document.querySelectorAll('[data-dom]').forEach(b => b.addEventListener('click', () => {
     const tid = b.dataset.dom;
     if (D.dom[tid]) { delete D.dom[tid]; delete D.revs[tid]; } else { D.dom[tid] = hoje(); D.revs[tid] = []; toast('Tópico dominado. O painel avisa quando revisar (1, 7 e 30 dias).'); }
