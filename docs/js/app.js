@@ -114,15 +114,19 @@ let ME = null, D = null, BANCO = [], QID = {}, ABA = 'painel', LEITOR = null, SI
 const SCFG = {mat: 'todas', nivel: '0', qtd: 10, modo: 'imediato'};
 const normDados = d => { d = d && typeof d === 'object' ? d : {}; return {v: 1, sims: Array.isArray(d.sims) ? d.sims : [], erros: Array.isArray(d.erros) ? d.erros : [], vistas: d.vistas || {}, dom: d.dom || {}, revs: d.revs || {}, estudo: d.estudo || {}}; };
 let salvarT = null, salvando = Promise.resolve(), pendente = false;
-function salvar(){ pendente = true; clearTimeout(salvarT); salvarT = setTimeout(gravar, 700); }
+const lerCache = id => { try { return JSON.parse(localStorage.getItem('ctsp-cache-' + id)); } catch (e) { return null; } };
+function guardarCache(pend){ if (!ME || !D) return; try { localStorage.setItem('ctsp-cache-' + ME.id, JSON.stringify({perfil: ME, dados: D, pend})); } catch (e) { /* sem armazenamento */ } }
+function salvar(){ pendente = true; guardarCache(true); clearTimeout(salvarT); salvarT = setTimeout(gravar, 700); }
 function gravar(){
   clearTimeout(salvarT); if (!pendente || !ME || !API) return salvando; pendente = false;
   const copia = JSON.parse(JSON.stringify(D));
-  salvando = salvando.then(() => API.salvarProgresso(ME.id, copia)).catch(e => { pendente = true; toast('Não deu para salvar agora. ' + erroTexto(e).replace(/<[^>]+>/g, '')); if (!/row-level security|permission denied|JWT/i.test(String(e && e.message))) setTimeout(gravar, 8000); });
+  salvando = salvando.then(() => API.salvarProgresso(ME.id, copia)).then(() => { if (!pendente) guardarCache(false); }).catch(e => { pendente = true; if (!navigator.onLine) return; /* volta pelo evento 'online' */ toast('Não deu para salvar agora. ' + erroTexto(e).replace(/<[^>]+>/g, '')); if (!/row-level security|permission denied|JWT/i.test(String(e && e.message))) setTimeout(gravar, 8000); });
   return salvando;
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') gravar(); });
 window.addEventListener('pagehide', gravar);
+window.addEventListener('online', () => { if (pendente) { gravar(); toast('Internet de volta: enviando o seu progresso.'); } });
+if ('serviceWorker' in navigator && !window.CTSP_API) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 /* ============ banco de questões ============ */
 async function carregarBanco(){
@@ -162,7 +166,7 @@ document.addEventListener('click', e => {
   const pr = e.target.closest('[data-praticar]'); if (pr) { praticar(pr.dataset.praticar); return; }
 });
 function irPara(v){ if (v === 'primeiro') { $('#f-primeiro').reset(); msg('#p1-msg'); } mostrar(v); }
-async function sair(){ await gravar(); if (API) await API.sair(); ME = null; D = null; SIM = null; LEITOR = null; mostrar('entrar'); prepararEntrada(); toast('Você saiu do portal.'); }
+async function sair(){ await gravar(); if (ME && !pendente) try { localStorage.removeItem('ctsp-cache-' + ME.id); } catch (e) { /* sem armazenamento */ } if (API) await API.sair(); ME = null; D = null; SIM = null; LEITOR = null; mostrar('entrar'); prepararEntrada(); toast('Você saiu do portal.'); }
 function abrirMais(){
   fecharMais();
   const m = document.createElement('div'); m.className = 'sheet'; m.id = 'mais';
@@ -218,11 +222,14 @@ $('#f-trocar').addEventListener('submit', async e => {
 });
 
 async function iniciarSessao(id){
-  const perfil = await API.perfil(id);
+  const c = lerCache(id); let perfil, dados;
+  try { perfil = await API.perfil(id); dados = await API.progresso(id); }
+  catch (e) { if (!c || navigator.onLine) throw e; perfil = c.perfil; dados = c.dados; toast('Sem internet: usando a cópia salva neste aparelho.'); }
   if (!perfil) { await API.sair(); msg('#login-msg', 'err', 'Esta conta não tem acesso ao portal. Fale com a administradora.'); return mostrar('entrar'); }
   if (!perfil.ativo) { await API.sair(); msg('#login-msg', 'err', 'Esta conta está bloqueada. Fale com a administradora.'); return mostrar('entrar'); }
   ME = perfil;
-  D = normDados(await API.progresso(id));
+  // progresso feito sem internet e ainda não enviado vale mais que a cópia do servidor
+  D = normDados(c && c.pend ? c.dados : dados); if (c && c.pend) salvar(); else guardarCache(false);
   if (!BANCO.length) await carregarBanco();
   API.salvarPerfil(id, {ultimo_acesso: new Date().toISOString()}).catch(() => {});
   if (ME.senha_provisoria) { $('#t-ola').textContent = 'Olá, ' + tituloDe(ME); return mostrar('trocar'); }
