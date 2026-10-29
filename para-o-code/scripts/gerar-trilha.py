@@ -8,7 +8,7 @@ from transformers import AutoProcessor, MusicgenForConditionalGeneration
 
 saida = sys.argv[1]
 seg = float(sys.argv[2]) if len(sys.argv) > 2 else 28
-prompt = "calm focused study background music, soft electronic pads, light steady beat, warm piano, no vocals, minimal, 95 bpm"
+prompt = sys.argv[3] if len(sys.argv) > 3 else "calm focused study background music, soft electronic pads, light steady beat, warm piano, no vocals, minimal, 95 bpm"
 
 proc = AutoProcessor.from_pretrained("facebook/musicgen-small")
 modelo = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
