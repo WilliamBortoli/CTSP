@@ -374,7 +374,7 @@ function rPainel(){
     '<svg class="art" viewBox="0 0 220 220" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4D78C"/><stop offset="1" stop-color="#A97A24"/></linearGradient><radialGradient id="g2"><stop offset="0" stop-color="rgba(222,178,82,.35)"/><stop offset="1" stop-color="rgba(222,178,82,0)"/></radialGradient></defs><circle cx="110" cy="110" r="100" fill="url(#g2)"/><path d="M50 50h120v95l-60 45-60-45z" fill="#0d0b08" stroke="#5a4520" stroke-width="3"/><path d="M62 70 110 98 158 70v18l-48 28-48-28z" fill="url(#g1)"/><path d="M62 98 110 126 158 98v18l-48 28-48-28z" fill="url(#g1)" opacity=".85"/><path d="m110 150 4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="#F4D78C"/></svg></div>' +
   '<div class="idcard"><div class="hd"><button type="button" class="avatar" data-foto aria-label="Trocar foto de perfil">' + avatarIn(ME.foto) + '</button><div class="nm"><b>' + esc(abrevDe(ME)) + '</b><small>' + (ME.idf ? 'ID FUNCIONAL ' + esc(ME.idf) : esc(ME.usuario)) + '</small></div></div>' +
     '<div class="tagrow">' + (ME.btl ? '<span class="tg">' + ic('shield') + esc(ME.btl) + '</span>' : '') + (ME.crbm ? '<span class="tg">' + ic('map') + esc(ME.crbm) + '</span>' : '') + (ca ? '<span class="tg">' + ic('cal') + '5 anos em ' + ca + '</span>' : '') + (!ME.btl ? '<button class="tg" data-tab="perfil">' + ic('edit') + 'Completar perfil</button>' : '') + '</div>' +
-    '<div class="rank"><svg width="42" height="42" viewBox="0 0 42 42" aria-hidden="true"><rect width="42" height="42" rx="10" fill="rgba(222,178,82,.12)"/><path d="M11 16 21 22l10-6v4l-10 6-10-6z" fill="#DEB252"/><path d="M11 23l10 6 10-6v4l-10 6-10-6z" fill="#DEB252" opacity=".45"/></svg><div style="flex:1;min-width:0"><b>Rumo a 2º Sargento</b><small>' + s.pontos + ' de ' + meta + ' pontos de estudo</small><div class="bar"><i style="width:' + pp + '%"></i></div></div></div></div></div>' +
+    '<div class="rank"><svg width="42" height="42" viewBox="0 0 42 42" aria-hidden="true"><rect width="42" height="42" rx="10" fill="rgba(222,178,82,.12)"/><path d="M11 16 21 22l10-6v4l-10 6-10-6z" fill="#DEB252"/><path d="M11 23l10 6 10-6v4l-10 6-10-6z" fill="#DEB252" opacity=".45"/></svg><div style="flex:1;min-width:0"><b>Pontos de estudo</b><small>' + s.pontos + ' de ' + meta + ' pontos</small><div class="bar"><i style="width:' + pp + '%"></i></div></div></div></div></div>' +
   '<div class="kpis">' + kpi('gold', 'target', s.tot ? ac + '%' : '—', 'acerto geral · meta 90%') + kpi('red', 'flame', s.seq + (s.seq === 1 ? ' dia' : ' dias'), 'seguidos estudando') +
     kpi('blue', 'book', s.dom + '/' + Object.keys(TOP).length, 'tópicos dominados') + kpi('green', 'medal', D.sims.length, D.sims.length === 1 ? 'simulado feito' : 'simulados feitos') + '</div>' +
   '<div class="grid"><div class="pnl"><div class="ph2"><h3>' + ic('check') + 'Missão de hoje</h3></div><div class="mis">' +
@@ -382,9 +382,9 @@ function rPainel(){
     missao(!rv.length, 'c-blue', 'repeat', rv.length ? 'Revisar ' + rv.length + (rv.length === 1 ? ' tópico' : ' tópicos') + ' hoje' : 'Revisões em dia', rv.length ? 'Revisão espaçada: 1, 7 e 30 dias depois de dominar' : 'Marque tópicos como dominados nas apostilas', rv.length ? 'data-topico="' + rv[0].tid + '" data-rev="1"' : 'data-tab="materias"') +
     missao(D.sims.some(x => x.d === hoje()), 'c-gold', 'target', '10 questões · ' + s.fraca.nomeCurto, 'Simulado focado na matéria mais fraca', 'data-praticar="fraca"') +
     missao(!D.erros.length, 'c-red', 'alert', D.erros.length ? 'Refazer ' + D.erros.length + ' questões do caderno de erros' : 'Caderno de erros em dia', D.erros.length ? 'Questões que você errou' : 'Nenhuma questão pendente', 'data-tab="erros"') + '</div></div>' +
-  '<div class="pnl"><div class="ph2"><h3>' + ic('chart') + 'Rumo ao corte</h3></div><div class="goal">' + anel(ultNota) +
+  '<div class="pnl"><div class="ph2"><h3>' + ic('chart') + 'Rumo ao corte</h3></div>' + (!s.ult ? '<p style="margin:0;color:var(--ink2)">O corte de 2026 foi 52 de 60. Faça um simulado para o portal projetar a sua nota.</p><button class="btn gold" data-praticar="rapido">' + ic('play') + 'Fazer meu primeiro simulado (10 questões)</button></div></div>' : '<div class="goal">' + anel(ultNota) +
     '<ul><li>' + ic(ultNota >= 52 ? 'check' : 'alert', 'color:var(--' + (ultNota >= 52 ? 'green' : 'red') + ')') + (s.ult ? (ultNota >= 52 ? 'Acima da nota de corte de 2026 (52)' : 'Faltam ' + (52 - ultNota) + ' para o corte de 2026 (52)') : 'Faça um simulado para medir') + '</li><li>' + ic('target', 'color:var(--gold)') + 'Meta: 54 a 57 de 60</li><li>' + ic('list', 'color:var(--blue)') + 'Projeção sobre 60 questões</li></ul></div>' +
-    '<div class="hist">' + (D.sims.length ? D.sims.slice(0, 4).map(x => '<div class="hrow"><b>' + esc(x.nome) + '</b><span class="n" style="color:var(--' + (pct(x.ok, x.tot) >= 80 ? 'green' : 'red') + ')">' + x.ok + '/' + x.tot + '</span><span class="hint">' + dm(x.d) + '</span></div>').join('') : '<div class="empty">Seus simulados aparecem aqui.</div>') + '</div></div></div>' +
+    '<div class="hist">' + (D.sims.length ? D.sims.slice(0, 4).map(x => '<div class="hrow"><b>' + esc(x.nome) + '</b><span class="n" style="color:var(--' + (pct(x.ok, x.tot) >= 80 ? 'green' : 'red') + ')">' + x.ok + '/' + x.tot + '</span><span class="hint">' + dm(x.d) + '</span></div>').join('') : '<div class="empty">Seus simulados aparecem aqui.</div>') + '</div></div></div>') +
   '<div class="pnl"><div class="ph2"><h3>' + ic('book') + 'Suas matérias</h3><button class="link" data-tab="materias">Abrir todas</button></div><div class="mats">' + MATS.map(m => cardMat(m, s)).join('') + '</div></div>';
   const rb = document.querySelector('[data-rev]'); if (rb) rb.addEventListener('click', () => { const tid = rb.dataset.topico; (D.revs[tid] = D.revs[tid] || []).push(hoje()); salvar(); }, {capture: true});
 }
@@ -490,6 +490,8 @@ function praticar(alvo){
     ABA = 'simulado'; document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === 'simulado'));
     rQuestao(); scrollTo(0, 0); return;
   }
+  if (alvo === 'rapido') { SCFG.mat = 'todas'; SCFG.nivel = '0'; SCFG.qtd = 10; SCFG.modo = 'imediato'; return iniciar(); }
+  if (alvo === 'prova') { SCFG.mat = 'prova'; SCFG.nivel = '0'; SCFG.modo = 'final'; return iniciar(); }
   if (alvo === 'fraca') { const f = stats().fraca; SCFG.mat = f.id; SCFG.nivel = '0'; SCFG.qtd = 10; SCFG.modo = 'imediato'; return iniciar(); }
   if (MAT[alvo]) { SCFG.mat = alvo; SCFG.nivel = '0'; SCFG.qtd = 10; SCFG.modo = 'imediato'; }
   aba('simulado');
@@ -498,14 +500,19 @@ function rSimulado(){
   if (SIM) { if (!SIM.fim) return rQuestao(); SIM = null; }
   const opts = '<option value="todas">Todas as matérias</option>' + MATS.map(m => '<option value="' + m.id + '"' + (SCFG.mat === m.id ? ' selected' : '') + '>' + esc(m.nomeCurto) + '</option>').join('') + '<option value="prova"' + (SCFG.mat === 'prova' ? ' selected' : '') + '>Prova completa (60 questões)</option>';
   const prova = SCFG.mat === 'prova';
-  $('#main').innerHTML = mtop() + '<div class="pnl"><div class="ph2"><h3>' + ic('target') + 'Montar simulado</h3><span class="hint">' + BANCO.length + ' questões no banco</span></div>' +
+  const fraca = stats().fraca;
+  $('#main').innerHTML = mtop() + '<div class="pnl"><div class="ph2"><h3>' + ic('target') + 'Simulado</h3><span class="hint">' + BANCO.length + ' questões no banco</span></div>' +
+    '<div class="atalhos"><button class="nivc" data-praticar="rapido"><b>Rápido</b><span>10 questões mistas, corrige na hora</span></button>' +
+    '<button class="nivc" data-praticar="fraca"><b>Matéria mais fraca</b><span>10 questões de ' + esc(fraca.nomeCurto) + '</span></button>' +
+    '<button class="nivc" data-praticar="prova"><b>Prova completa</b><span>60 questões, 4 horas</span></button></div>' +
+    '<details class="pers"' + (SCFG.aberto ? ' open' : '') + '><summary>Personalizar (matéria, quantidade, nível)</summary><div>' +
     '<div class="cfg"><div class="field"><label for="s-mat">Matéria</label><div class="inp">' + ic('book') + '<select id="s-mat">' + opts + '</select></div></div>' +
     '<div class="field"><label for="s-qtd">Quantidade</label><div class="inp">' + ic('list') + '<select id="s-qtd"' + (prova ? ' disabled' : '') + '>' + [5, 10, 20, 30].map(n => '<option' + (SCFG.qtd === n ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div></div>' +
     '<p class="hint" id="s-disp" style="grid-column:1/-1;margin:0"></p></div>' +
     '<div class="niv">' + ['1', '2', '3'].map(n => '<button class="nivc' + (SCFG.nivel === n ? ' on' : '') + '" data-niv="' + n + '"><b>' + NIV[n][0] + '</b><span>' + NIV[n][1] + '</span></button>').join('') + '</div>' +
     '<button class="nivc' + (SCFG.nivel === '0' ? ' on' : '') + '" data-niv="0" style="flex-direction:row;align-items:center;gap:10px"><b style="font-size:14px">Misturar níveis</b><span>recomendado</span></button>' +
     '<div class="modo"><button class="nivc' + (SCFG.modo === 'imediato' && !prova ? ' on' : '') + '" data-modo="imediato"' + (prova ? ' disabled' : '') + '><b style="font-size:14px">Corrigir a cada questão</b><span>Vê a explicação na hora</span></button><button class="nivc' + (SCFG.modo === 'final' || prova ? ' on' : '') + '" data-modo="final"><b style="font-size:14px">Corrigir no final</b><span>' + (prova ? 'Como na prova: 4 horas' : 'Treina o ritmo da prova') + '</span></button></div>' +
-    '<button class="btn gold" id="s-go">' + ic('play') + 'Começar simulado</button>' + (D.erros.length ? '<button class="btn ghost" data-tab="erros">' + ic('repeat') + 'Refazer o caderno de erros (' + D.erros.length + ')</button>' : '') + '</div>';
+    '<button class="btn gold" id="s-go">' + ic('play') + 'Começar simulado</button></div></details>' + (D.erros.length ? '<button class="btn ghost" data-tab="erros">' + ic('repeat') + 'Refazer o caderno de erros (' + D.erros.length + ')</button>' : '') + '</div>';
   const disp = () => {
     SCFG.mat = $('#s-mat').value; if (SCFG.mat !== 'prova') SCFG.qtd = +$('#s-qtd').value;
     let n, novas;
@@ -518,6 +525,7 @@ function rSimulado(){
   document.querySelectorAll('[data-niv]').forEach(b => { b.onclick = () => { SCFG.nivel = b.dataset.niv; rSimulado(); }; });
   document.querySelectorAll('[data-modo]').forEach(b => { b.onclick = () => { SCFG.modo = b.dataset.modo; rSimulado(); }; });
   $('#s-go').onclick = iniciar;
+  $('details.pers').ontoggle = e => { SCFG.aberto = e.target.open; };
 }
 function iniciar(){
   let qs, nome, modo = SCFG.modo, prova = false;
@@ -586,9 +594,11 @@ function rResultado(){
   const erradas = SIM.qs.map((q, i) => [q, SIM.resp[i]]).filter(([q, r]) => (r != null || SIM.modo === 'final') && r !== q.correta);
   $('#main').innerHTML = mtop() + '<div class="pnl"><div class="ph2"><h3>' + ic('medal') + 'Resultado · ' + esc(SIM.nome) + '</h3><span class="hint">' + tempo((Date.now() - SIM.ini) / 1000) + '</span></div><div class="score"><div class="big">' + ok + '<small>/' + tot + '</small></div><b style="font:700 24px var(--fm);color:var(--' + (a >= 80 ? 'green' : 'red') + ')">' + a + '%</b>' + (!SIM.prova && tot ? '<span class="hint">equivale a ' + nota + ' de 60</span>' : '') + '</div>' +
     '<p style="margin:0;color:var(--ink2)">' + (a >= 90 ? 'Nível de aprovação, ' + esc(tituloDe(ME)) + '. Mantenha o ritmo.' : a >= 75 ? 'Bom resultado, ' + esc(tituloDe(ME)) + '. Revise os erros para chegar aos 90%.' : 'Vamos reforçar a base, ' + esc(tituloDe(ME)) + '. As questões erradas foram para o caderno de erros.') + '</p>' + tabela +
-    '<div class="row2"><button class="btn ghost" data-tab="erros">' + ic('alert') + 'Caderno de erros</button><button class="btn gold" id="r-novo">' + ic('repeat') + 'Novo simulado</button></div><button class="btn ghost" data-tab="painel">' + ic('home') + 'Voltar ao painel</button></div>' +
-    (erradas.length ? '<div class="pnl"><div class="ph2"><h3>' + ic('list') + 'Correção dos erros</h3></div>' + erradas.map(([q, r]) => revQ(q, r)).join('') + '</div>' : '');
+    (erradas.length ? '<button class="btn gold" id="r-rev">' + ic('alert') + 'Revisar meus ' + erradas.length + ' erros agora</button>' : '') +
+    '<div class="row2"><button class="btn ' + (erradas.length ? 'ghost' : 'gold') + '" id="r-novo">' + ic('repeat') + 'Novo simulado</button><button class="btn ghost" data-tab="painel">' + ic('home') + 'Voltar ao painel</button></div></div>' +
+    (erradas.length ? '<div class="pnl" id="r-erros"><div class="ph2"><h3>' + ic('list') + 'Correção dos erros</h3></div>' + erradas.map(([q, r]) => revQ(q, r)).join('') + '</div>' : '');
   $('#r-novo').onclick = () => { SIM = null; aba('simulado'); };
+  const rv = $('#r-rev'); if (rv) rv.onclick = () => { const d = document.querySelector('#r-erros details'); d.open = true; d.scrollIntoView({behavior: 'smooth', block: 'start'}); };
 }
 function revQ(q, r, extra){
   return '<details class="rev"><summary><span class="mk no">' + esc(MAT[q.mat].nomeCurto) + '</span><span class="s">' + esc(q.enunciado.slice(0, 120)) + '</span></summary><div class="body"><div class="enun" style="font-size:15px">' + esc(q.enunciado) + '</div><div>' +

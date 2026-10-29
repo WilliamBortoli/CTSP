@@ -69,8 +69,9 @@ const ok = (c, m) => { if (!c) { falhas.push(m); console.log('FALHOU:', m); } el
     await p.click('#voltar-mat'); await p.waitForSelector('#busca');
 
     // simulado imediato
-    await tab('simulado'); await p.waitForSelector('#s-go');
+    await tab('simulado'); await p.waitForSelector('.atalhos');
     await shot('08-montar');
+    await p.click('details.pers > summary');
     await p.selectOption('#s-qtd', '5'); await p.click('#s-go');
     for (let i = 0; i < 5; i++) { await p.waitForSelector('.opt'); await p.click('.opt >> nth=' + (i % 2)); await p.waitForSelector('.fb'); if (i === 0) await shot('09-questao'); await p.click('#q-next'); }
     await p.waitForSelector('.score'); await shot('10-resultado');

@@ -21,6 +21,14 @@
 .pghead h1{font-size:clamp(26px,4vw,36px);line-height:1.05;text-transform:uppercase}
 .pghead h1 em{font-style:normal;color:var(--gold2)}
 .pghead p{margin:0;color:var(--ink2);max-width:70ch}
+/* celular: perfil completo fica em "Meu perfil"; no painel sobra só a barra de pontos */
+@media(max-width:760px){.hello .idcard .hd,.hello .idcard .tagrow,.hello .idcard::after{display:none}.hello .idcard{padding:14px}}
+.atalhos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.atalhos .nivc{text-align:left}
+details.pers>summary{cursor:pointer;font:600 14px var(--fb);color:var(--ink2);padding:8px 0;list-style-position:inside}
+details.pers[open]>summary{margin-bottom:12px}
+details.pers>div{display:flex;flex-direction:column;gap:14px}
+@media(max-width:1000px){.qnav{position:sticky;bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:5;margin:0 -4px;padding:10px 4px;background:linear-gradient(transparent,var(--bg) 30%)}}
 @media(max-width:1000px){.toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 .olho{display:flex;padding:6px;margin-right:-6px;border:0;background:none;color:var(--mut);cursor:pointer}
 .olho.on{color:var(--gold)}
