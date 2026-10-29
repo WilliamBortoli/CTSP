@@ -20,6 +20,7 @@
     async trocarSenha(n){ await espera(); const db = ler(); db.users[db.sess].s = n; grava(db); },
     async progresso(id){ await espera(); return ler().prog[id] || null; },
     async salvarProgresso(id, dados){ await espera(); log('salvarProgresso', dados.sims.length); const db = ler(); db.prog[id] = dados; grava(db); },
+    async ranking(){ await espera(); const db = ler(); return Object.values(db.perfis).filter(p => p.ativo).map(p => { const s = ((db.prog[p.id] || {}).sims || []); const q = s.reduce((a, x) => a + x.tot, 0), ok = s.reduce((a, x) => a + x.ok, 0); return {guerra: p.guerra, btl: p.btl, pontos: q + 2 * ok, questoes: q, acertos: ok, eu: p.id === db.sess}; }).sort((a, b) => b.pontos - a.pontos); },
     async listarAlunos(){ await espera(); const db = ler(); return Object.values(db.perfis).map(p => Object.assign({}, p, {dados: db.prog[p.id] || {}})); },
     async criarAluno(c, senha){ await espera(); const db = ler(); if (Object.values(db.perfis).some(p => p.usuario === c.usuario)) throw erro('usuario_existe'); if (c.idf && Object.values(db.perfis).some(p => p.idf === c.idf)) throw erro('idf_existe');
       const id = uid(); db.users[id] = {u: c.usuario, s: senha}; db.perfis[id] = Object.assign({id, incl: null, foto: null, papel: 'aluno', ativo: true, senha_provisoria: true, criado_em: new Date().toISOString()}, c); db.prog[id] = {}; grava(db); return id; },

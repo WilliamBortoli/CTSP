@@ -1,0 +1,16 @@
+# Duas vezes por semana: faz a cópia de segurança do progresso no Supabase
+# e mantém o projeto gratuito ativo (ele pausa depois de 7 dias sem uso).
+name: Manter ativo e backup
+on:
+  schedule:
+    - cron: '0 12 * * 1,4'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          KEY=$(grep -oE "sb_publishable_[A-Za-z0-9_-]{10,}" docs/js/config.js | head -1)
+          URL=$(grep -oE "https://[a-z0-9]+\.supabase\.co" docs/js/config.js | head -1)
+          curl -fsS -X POST "$URL/rest/v1/rpc/manter_ativo" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}'

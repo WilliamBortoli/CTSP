@@ -94,6 +94,7 @@ function criarAPI(){
     async trocarSenha(nova){ ok(await sb.auth.updateUser({password: nova})); },
     async progresso(id){ const d = ok(await sb.from('progresso').select('dados').eq('user_id', id).maybeSingle()); return d ? d.dados : null; },
     async salvarProgresso(id, dados){ ok(await sb.from('progresso').upsert({user_id: id, dados, atualizado_em: new Date().toISOString()})); },
+    async ranking(){ return ok(await sb.rpc('ranking_semanal')); },
     async listarAlunos(){
       const [p, g] = await Promise.all([sb.from('perfis').select('*').order('criado_em'), sb.from('progresso').select('user_id,dados,atualizado_em')]);
       const ps = ok(p), gs = ok(g), m = {}; gs.forEach(x => { m[x.user_id] = x; });
@@ -393,8 +394,20 @@ function rPainel(){
   '<div class="pnl"><div class="ph2"><h3>' + ic('chart') + 'Rumo ao corte</h3></div>' + (!s.ult ? '<p style="margin:0;color:var(--ink2)">O corte de 2026 foi 52 de 60. Faça um simulado para o portal projetar a sua nota.</p><button class="btn gold" data-praticar="rapido">' + ic('play') + 'Fazer meu primeiro simulado (10 questões)</button></div></div>' : '<div class="goal">' + anel(ultNota) +
     '<ul><li>' + ic(ultNota >= 52 ? 'check' : 'alert', 'color:var(--' + (ultNota >= 52 ? 'green' : 'red') + ')') + (s.ult ? (ultNota >= 52 ? 'Acima da nota de corte de 2026 (52)' : 'Faltam ' + (52 - ultNota) + ' para o corte de 2026 (52)') : 'Faça um simulado para medir') + '</li><li>' + ic('target', 'color:var(--gold)') + 'Meta: 54 a 57 de 60</li><li>' + ic('list', 'color:var(--blue)') + 'Projeção sobre 60 questões</li></ul></div>' +
     '<div class="hist">' + (D.sims.length ? D.sims.slice(0, 4).map(x => '<div class="hrow"><b>' + esc(x.nome) + '</b><span class="n" style="color:var(--' + (pct(x.ok, x.tot) >= 80 ? 'green' : 'red') + ')">' + x.ok + '/' + x.tot + '</span><span class="hint">' + dm(x.d) + '</span></div>').join('') : '<div class="empty">Seus simulados aparecem aqui.</div>') + '</div></div></div>') +
+  '<div class="pnl"><div class="ph2"><h3>' + ic('medal') + 'Ranking da semana</h3><span class="hint">questões + 2 × acertos</span></div><div class="hist" id="rank-l"><div class="empty">Carregando…</div></div></div>' +
   '<div class="pnl"><div class="ph2"><h3>' + ic('book') + 'Suas matérias</h3><button class="link" data-tab="materias">Abrir todas</button></div><div class="mats">' + MATS.map(m => cardMat(m, s)).join('') + '</div></div>';
   const rb = document.querySelector('[data-rev]'); if (rb) rb.addEventListener('click', () => { const tid = rb.dataset.topico; (D.revs[tid] = D.revs[tid] || []).push(hoje()); salvar(); }, {capture: true});
+  rRanking();
+}
+// o servidor só conta simulados já salvos: grava antes de pedir o ranking
+async function rRanking(){
+  const el = () => $('#rank-l');
+  try {
+    await gravar(); const rs = await API.ranking(); if (!el()) return;
+    const top = rs.slice(0, 5), eu = rs.findIndex(r => r.eu);
+    const linha = (r, i) => '<div class="hrow"' + (r.eu ? ' style="border-color:var(--gold)"' : '') + '><b>' + (i + 1) + 'º · ' + esc(r.guerra || '—') + (r.btl ? ' <span class="hint">' + esc(r.btl) + '</span>' : '') + '</b><span class="n">' + r.pontos + '</span><span class="hint">' + r.questoes + ' questões</span></div>';
+    el().innerHTML = rs.some(r => r.pontos) ? top.map(linha).join('') + (eu >= 5 ? linha(rs[eu], eu) : '') : '<div class="empty">Ninguém pontuou ainda nesta semana. Faça 10 questões e saia na frente.</div>';
+  } catch (e) { if (el()) el().innerHTML = '<div class="empty">Ranking indisponível agora' + (navigator.onLine ? '' : ' (sem internet)') + '.</div>'; }
 }
 
 /* ---- plano ---- */

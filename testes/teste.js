@@ -124,6 +124,8 @@ const ok = (c, m) => { if (!c) { falhas.push(m); console.log('FALHOU:', m); } el
     await p.waitForSelector('#f-perfil'); ok(true, nome + ': aluno trocou senha e entrou');
     ok(!(await p.locator('[data-tab="alunos"]').first().isVisible()), nome + ': aluno não vê aba Alunos');
     await tab('painel'); await shot('18-painel-aluno');
+    await p.waitForSelector('#rank-l .hrow'); const rk = await p.locator('#rank-l .hrow').count(); ok(rk >= 1, nome + ': ranking da semana com ' + rk + ' nome(s)');
+    await p.locator('#rank-l').scrollIntoViewIfNeeded(); await shot('19-ranking');
     // recarregar mantém sessão e progresso
     await p.reload(); await p.waitForSelector('#v-app:not([hidden]) .greet');
     ok(true, nome + ': sessão mantida ao recarregar');
