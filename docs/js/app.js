@@ -142,7 +142,8 @@ function escolher(lista, n){
   return shuffle(lista.slice()).sort((a, b) => (v[a.id] || 0) - (v[b.id] || 0)).slice(0, n);
 }
 function embaralhar(q){
-  if (q.alternativas.some(a => /^(apenas|somente|todas|nenhuma|i,|i e|v\s*[–-]|f\s*[–-])/i.test(a) || /\s[–-]\s/.test(a))) return q;
+  // só não embaralha alternativa que aponta para outra ("todas as anteriores", "A e B"); o resto vinha com a certa quase sempre na A
+  if (q.alternativas.some(a => /(das|as) anteriores|alternativas? [A-E]\b|\b[A-E] e [A-E]\b/.test(a))) return q;
   const ix = shuffle(q.alternativas.map((_, i) => i));
   return Object.assign({}, q, {alternativas: ix.map(i => q.alternativas[i]), correta: ix.indexOf(q.correta)});
 }
