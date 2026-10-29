@@ -156,12 +156,18 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
   const j = await transcreve(saida, true);
   const ouv = (j.words || []).flatMap(w => norm(w.word).map(p => ({ p, t: w.start })));
   if (!ouv.length) throw new Error('transcrição sem tempos por palavra');
-  const esp = itens.flatMap((it, k) => norm(it.fala).map(p => ({ p, k })));
-  const tempoDe = {};
-  for (const [i, jj] of alinha(esp.map(x => x.p), ouv.map(x => x.p))) if (!(esp[i].k in tempoDe)) tempoDe[esp[i].k] = ouv[jj].t;
+  const esp = itens.flatMap((it, k) => it.fala.split(/\s+/).flatMap((w, wi) => norm(w).map(p => ({ p, k, wi }))));
+  const tempoDe = {}, tPal = {};
+  for (const [i, jj] of alinha(esp.map(x => x.p), ouv.map(x => x.p))) {
+    const e = esp[i];
+    if (!(e.k in tempoDe)) tempoDe[e.k] = ouv[jj].t;
+    if (!((e.k + ':' + e.wi) in tPal)) tPal[e.k + ':' + e.wi] = ouv[jj].t;
+  }
   let antes = 0;
   itens.forEach((it, k) => { it.ini = +Math.max(antes, k ? (tempoDe[k] ?? antes) - 0.1 : 0).toFixed(2); antes = it.ini; });
   itens.forEach((it, k) => { it.dur = +((k < itens.length - 1 ? itens[k + 1].ini : total) - it.ini).toFixed(2); });
+  // tempo de cada palavra escrita (legenda palavra por palavra); a não reconhecida herda o tempo da anterior
+  itens.forEach((it, k) => { let t = it.ini; it.palavras = it.fala.split(/\s+/).map((w, wi) => ({ w, t: +(t = Math.min(it.ini + it.dur - 0.05, Math.max(t, tPal[k + ':' + wi] ?? t))).toFixed(2) })); });
   const sem = itens.filter((_, k) => k && !(k in tempoDe)).map(it => it.tit);
   if (sem.length) console.log('ATENÇÃO: início estimado (palavra não reconhecida) em: ' + sem.join(', '));
   itens.forEach((it, k) => console.log(`${k + 1}/${itens.length} ${it.tit} ${it.ini}s (${it.dur.toFixed(1)} s)`));
