@@ -167,7 +167,17 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
   itens.forEach((it, k) => { it.ini = +Math.max(antes, k ? (tempoDe[k] ?? antes) - 0.1 : 0).toFixed(2); antes = it.ini; });
   itens.forEach((it, k) => { it.dur = +((k < itens.length - 1 ? itens[k + 1].ini : total) - it.ini).toFixed(2); });
   // tempo de cada palavra escrita (legenda palavra por palavra); a não reconhecida herda o tempo da anterior
-  itens.forEach((it, k) => { let t = it.ini; it.palavras = it.fala.split(/\s+/).map((w, wi) => ({ w, t: +(t = Math.min(it.ini + it.dur - 0.05, Math.max(t, tPal[k + ':' + wi] ?? t))).toFixed(2) })); });
+  itens.forEach((it, k) => {
+    const ws = it.fala.split(/\s+/), fim = it.ini + it.dur - 0.05, ts = ws.map((_, wi) => tPal[k + ':' + wi]);
+    // palavra sem par na transcrição (ex.: "trezentos e cinco" ouvido como "305") ganha tempo interpolado
+    for (let i = 0; i < ws.length; i++) if (ts[i] == null) {
+      let j = i; while (j < ws.length && ts[j] == null) j++;
+      const a = i ? ts[i - 1] : it.ini, b = j < ws.length ? ts[j] : fim, off = i ? 1 : 0;
+      for (let m = i; m < j; m++) ts[m] = a + (b - a) * (m - i + off) / (j - i + off);
+      i = j - 1;
+    }
+    let t = it.ini; it.palavras = ws.map((w, wi) => ({ w, t: +(t = Math.min(fim, Math.max(t, ts[wi]))).toFixed(2) }));
+  });
   const sem = itens.filter((_, k) => k && !(k in tempoDe)).map(it => it.tit);
   if (sem.length) console.log('ATENÇÃO: início estimado (palavra não reconhecida) em: ' + sem.join(', '));
   itens.forEach((it, k) => console.log(`${k + 1}/${itens.length} ${it.tit} ${it.ini}s (${it.dur.toFixed(1)} s)`));
