@@ -3,6 +3,7 @@
 // narrarCorrido: o texto inteiro numa chamada só (mesma voz, sem emendas); cada item recebe o início pelo tempo das palavras.
 // Cada item precisa de { tit, fala }; recebe { ini, dur }.
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -31,6 +32,16 @@ const nota = (esperado, ouvido) => {
 };
 console.assert(nota('Férias. 30 dias, até 3 períodos.', 'ferias 30 dias ate 3 periodos').nota === 1, 'nota: autoteste');
 
+// node:http em vez de fetch: o fetch do Node desiste em 300 s, e num PC lento um bloco passa disso
+const pede = async (rota, init, ms = 20 * 60000) => {
+  const req = new Request(VS + rota, init), corpo = Buffer.from(await req.arrayBuffer());
+  return new Promise((ok, falha) => {
+    const h = http.request(VS + rota, { method: req.method, headers: { ...Object.fromEntries(req.headers), 'content-length': corpo.length }, timeout: ms }, res => {
+      const partes = []; res.on('data', d => partes.push(d)); res.on('end', () => ok(new Response(Buffer.concat(partes), { status: res.statusCode })));
+    });
+    h.on('timeout', () => h.destroy(new Error('VoiceStudio: tempo esgotado'))); h.on('error', falha); h.end(corpo);
+  });
+};
 // o VoiceStudio às vezes congela e não responde mais: reinicia o app e tenta de novo
 const reiniciaVS = async () => {
   console.log('  VoiceStudio sem resposta: reiniciando o app…');
@@ -40,7 +51,7 @@ const reiniciaVS = async () => {
     Start-Sleep 3; Start-Process $e`]);
   for (let k = 0; k < 120; k++) { // espera até 10 min o modelo carregar, com um pedido por vez
     await new Promise(r => setTimeout(r, 5000));
-    try { const r = await fetch(VS + '/v1/audio/speech', { method: 'POST', signal: AbortSignal.timeout(280000), headers: { 'Content-Type': 'application/json' },
+    try { const r = await pede('/v1/audio/speech', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'omnivoice', input: 'teste', language: 'pt', response_format: 'wav' }) }); if (r.ok) return; } catch {}
   }
   throw new Error('VoiceStudio não voltou após reiniciar');
@@ -48,9 +59,9 @@ const reiniciaVS = async () => {
 const vs = async (rota, init) => {
   for (let k = 0; ; k++) {
     try {
-      const r = await fetch(VS + rota, { ...init, signal: AbortSignal.timeout(280000) }); // o fetch do Node desiste em 300 s de qualquer jeito
+      const r = await pede(rota, init);
       if (r.ok) return r;
-      if (r.status < 500) throw new Error(`VoiceStudio ${r.status}: ${await r.text()}`);
+      if (r.status < 500 || k >= 2) throw new Error(`VoiceStudio ${r.status}: ${await r.text()}`);
     } catch (e) { if (k >= 2 || /VoiceStudio 4/.test(e.message)) throw e; }
     await reiniciaVS();
   }
@@ -122,7 +133,9 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
   const tmp = path.join(dir, '.falas');
   fs.mkdirSync(tmp, { recursive: true });
   const blocos = [];
-  for (const it of itens) { const b = blocos.at(-1); if (b && (b + ' ' + it.fala).length <= 180) blocos[blocos.length - 1] = b + ' ' + it.fala; else blocos.push(it.fala); }
+  // fala acima de 180 caracteres é quebrada em frases (ou vírgulas), senão o bloco fica longo e o VoiceStudio trava
+  const partes = f => f.length <= 180 ? [f] : f.split(/(?<=[.:!?])\s+/).flatMap(s => s.length <= 180 ? [s] : s.split(/(?<=,)\s+/));
+  for (const f of itens.flatMap(it => partes(it.fala))) { const b = blocos.at(-1); if (b && (b + ' ' + f).length <= 180) blocos[blocos.length - 1] = b + ' ' + f; else blocos.push(f); }
   const wavs = [];
   for (const [k, texto] of blocos.entries()) {
     const wav = path.join(tmp, 'bloco-' + createHash('sha1').update(texto + ref.audio).digest('hex').slice(0, 12) + '.wav');
@@ -153,8 +166,21 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
   const total = +duracao(saida).toFixed(2);
 
   // tempo de cada palavra na narração final; o item começa na sua primeira palavra reconhecida
-  const j = await transcreve(saida, true);
-  const ouv = (j.words || []).flatMap(w => norm(w.word).map(p => ({ p, t: w.start })));
+  // áudio longo derruba a transcrição: transcreve em pedaços de ~80 s, cortados nas pausas entre blocos (cada pedaço fica salvo)
+  const cortes = [0]; let acum = 0;
+  for (const w of wavs) { acum += (duracao(w) + 0.13) / VEL; if (acum - cortes.at(-1) >= 80 && total - acum > 5) cortes.push(+acum.toFixed(2)); }
+  const ouv = [];
+  for (const [i, a] of cortes.entries()) {
+    const b = cortes[i + 1] ?? total, cache = path.join(tmp, `palavras-${total}-${a}.json`);
+    if (!fs.existsSync(cache)) {
+      const pedaco = path.join(tmp, 'pedaco.mp3');
+      ff('ffmpeg', ['-y', '-v', 'error', '-ss', String(a), '-to', String(b), '-i', saida, '-c', 'copy', pedaco]);
+      const j = await transcreve(pedaco, true);
+      console.log(`  sincronia ${i + 1}/${cortes.length}: ${(j.words || []).length} palavras`);
+      fs.writeFileSync(cache, JSON.stringify(j.words || []));
+    }
+    for (const w of JSON.parse(fs.readFileSync(cache))) for (const p of norm(w.word)) ouv.push({ p, t: +(w.start + a).toFixed(2) });
+  }
   if (!ouv.length) throw new Error('transcrição sem tempos por palavra');
   const esp = itens.flatMap((it, k) => it.fala.split(/\s+/).flatMap((w, wi) => norm(w).map(p => ({ p, k, wi }))));
   const tempoDe = {}, tPal = {};
