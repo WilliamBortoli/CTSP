@@ -128,6 +128,17 @@ const falaRef = async (texto, wav, ref) => {
   fs.writeFileSync(wav, Buffer.from(await (await vs('/generate', { method: 'POST', body: fd })).arrayBuffer()));
 };
 
+// a transcrição às vezes perde um trecho inteiro: o item sem palavra ouvida recebe início proporcional ao tamanho da fala, em vez de duração zero
+const interpola = (ini, ultimaPalavra, pesos, total) => {
+  for (let k = 1; k < pesos.length; k++) if (ini[k] == null) {
+    let j = k; while (j < pesos.length && ini[j] == null) j++;
+    const a = ultimaPalavra(k - 1), b = j < pesos.length ? ini[j] : total, soma = pesos.slice(k, j).reduce((x, y) => x + y) + 1;
+    let acc = 1; for (let m = k; m < j; m++) { ini[m] = a + (b - a) * acc / soma; acc += pesos[m]; }
+    k = j - 1;
+  }
+};
+{ const t = { 0: 0, 3: 41 }; interpola(t, () => 10, [5, 10, 20, 5], 99); console.assert(t[1] === 11 && t[2] === 21, 'interpola: autoteste'); }
+
 // texto longo trava o VoiceStudio: gera em blocos de ~180 caracteres, todos com a voz de `ref`, e funde as emendas
 export async function narrarCorrido(itens, dir, { VEL, ref }) {
   const tmp = path.join(dir, '.falas');
@@ -189,6 +200,9 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
     if (!(e.k in tempoDe)) tempoDe[e.k] = ouv[jj].t;
     if (!((e.k + ':' + e.wi) in tPal)) tPal[e.k + ':' + e.wi] = ouv[jj].t;
   }
+  const sem = itens.filter((_, k) => k && !(k in tempoDe)).map(it => it.tit);
+  const ultimaPalavra = k => { const n = itens[k].fala.split(/\s+/).length; for (let w = n - 1; w >= 0; w--) if ((k + ':' + w) in tPal) return tPal[k + ':' + w]; return tempoDe[k] ?? 0; };
+  interpola(tempoDe, ultimaPalavra, itens.map(it => it.fala.split(/\s+/).length), total);
   let antes = 0;
   itens.forEach((it, k) => { it.ini = +Math.max(antes, k ? (tempoDe[k] ?? antes) - 0.1 : 0).toFixed(2); antes = it.ini; });
   itens.forEach((it, k) => { it.dur = +((k < itens.length - 1 ? itens[k + 1].ini : total) - it.ini).toFixed(2); });
@@ -204,7 +218,6 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
     }
     let t = it.ini; it.palavras = ws.map((w, wi) => ({ w, t: +(t = Math.min(fim, Math.max(t, ts[wi]))).toFixed(2) }));
   });
-  const sem = itens.filter((_, k) => k && !(k in tempoDe)).map(it => it.tit);
   if (sem.length) console.log('ATENÇÃO: início estimado (palavra não reconhecida) em: ' + sem.join(', '));
   itens.forEach((it, k) => console.log(`${k + 1}/${itens.length} ${it.tit} ${it.ini}s (${it.dur.toFixed(1)} s)`));
   return total;
