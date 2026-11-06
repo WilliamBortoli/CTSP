@@ -122,6 +122,20 @@ const ALT = {
   flow: p => 110 + linhas(p.html, 46, 820), tab: p => 110 + p.linhas.reduce((s, r) => s + Math.max(...r.map(c => linhas(c, 38, 900 / r.length))) + 30, 0), graf: () => 420,
 };
 const ALTURA_MAX = 1180;
+// tabela mais alta que a página continua em outra cena, repetindo o cabeçalho; a narração não muda
+const cabeNaPagina = t => 160 + ALT.tab(t) + 36 <= ALTURA_MAX;
+const divideTabela = p => {
+  if (p.kind !== 'tab' || cabeNaPagina(p)) return [p];
+  const pedacos = []; let atual = [];
+  for (const l of p.linhas) {
+    if (atual.length && !cabeNaPagina(tabela(p.cab, [...atual, l]))) { pedacos.push(tabela(p.cab, atual)); atual = []; }
+    atual.push(l);
+  }
+  pedacos.push(tabela(p.cab, atual));
+  if (p.lbl) pedacos[0].lbl = p.lbl;
+  return pedacos;
+};
+{ const d = divideTabela(tabela(['a', 'b'], Array(40).fill(['x'.repeat(50), 'y'.repeat(50)]))); if (d.length < 2 || d.flatMap(t => t.linhas).length !== 40 || !d.every(cabeNaPagina)) throw new Error('divideTabela: autoteste falhou'); }
 
 // tópico → cenas
 const ICO = { target: 'target', list: 'list-checks', bolt: 'zap', alert: 'triangle-alert', shield: 'shield' };
@@ -144,7 +158,7 @@ const cenasDoTopico = T => {
     // quebra em páginas pela altura
     let pag = [], h = 160;
     const fecha = () => { if (pag.length) cenas.push({ tipo: 'bloco', lbl, ico, partes: pag }); pag = []; h = 160; };
-    for (const p of pecas) { const a = ALT[p.kind](p) + 36; if (pag.length && h + a > ALTURA_MAX) fecha(); pag.push(p); h += a; }
+    for (const p of pecas.flatMap(divideTabela)) { const a = ALT[p.kind](p) + 36; if (pag.length && h + a > ALTURA_MAX) fecha(); pag.push(p); h += a; }
     fecha();
   }
   // questão do banco: mesma lei do tópico (herdada do anterior quando a referência só traz artigos) e artigo no intervalo
