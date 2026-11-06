@@ -236,7 +236,7 @@ for (const [pi, tops] of partes.entries()) {
   const np = pi + 1;
   if (soParte && +soParte !== np) { tops.forEach(cenasDoTopico); continue; } // mantém a escolha das questões igual
   const parte = nPartes > 1 ? ` · Parte ${np} de ${nPartes}` : '';
-  const cenas = [{ tipo: 'capa', tops, partes: [{ kind: 'nada', fala: `Aula de ${M.nome}${nPartes > 1 ? `, parte ${np} de ${nPartes}` : ''}. Nesta aula: ${tops.map(T => texto(T.html.match(/data-nav="([^"]*)"/)[1])).join(', ')}.` }] },
+  const cenas = [{ tipo: 'capa', tops, partes: [{ kind: 'nada', fala: `Aula de ${M.nome}${nPartes > 1 ? `, parte ${np} de ${nPartes}` : ''}. Nesta aula: ${tops.map(T => texto(T.html.match(/data-nav="([^"]*)"/)[1]).replace(/^RDBM: /, '')).join(', ')}.` }] }, // a voz para de falar depois de "R D B M:" na lista
     ...(process.env.PREVIA ? cenasDoTopico(tops[0]) : tops.flatMap(cenasDoTopico)), // PREVIA=1: só a capa e o primeiro tópico, para ver o estilo
     ...(process.env.PREVIA ? [] : [{ tipo: 'fim', partes: [{ kind: 'nada', fala: 'Agora é com você. Faça as questões desta matéria no portal.' }] }])];
   const itens = cenas.flatMap((c, ci) => c.partes.map((p, k) => Object.assign(p, { tit: `${c.tipo} ${ci}.${k + 1}` })));
