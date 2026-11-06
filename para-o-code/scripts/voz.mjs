@@ -180,19 +180,29 @@ export async function narrarCorrido(itens, dir, { VEL, ref }) {
   // áudio longo derruba a transcrição: transcreve em pedaços de ~80 s, cortados nas pausas entre blocos (cada pedaço fica salvo)
   const cortes = [0]; let acum = 0;
   for (const w of wavs) { acum += (duracao(w) + 0.13) / VEL; if (acum - cortes.at(-1) >= 80 && total - acum > 5) cortes.push(+acum.toFixed(2)); }
-  const ouv = [];
-  for (const [i, a] of cortes.entries()) {
-    const b = cortes[i + 1] ?? total, cache = path.join(tmp, `palavras-${total}-${a}.json`);
+  const ouveTrecho = async (a, b, cache) => {
     if (!fs.existsSync(cache)) {
       const pedaco = path.join(tmp, 'pedaco.mp3');
       ff('ffmpeg', ['-y', '-v', 'error', '-ss', String(a), '-to', String(b), '-i', saida, '-c', 'copy', pedaco]);
       const j = await transcreve(pedaco, true);
-      console.log(`  sincronia ${i + 1}/${cortes.length}: ${(j.words || []).length} palavras`);
+      console.log(`  sincronia ${a}s a ${b}s: ${(j.words || []).length} palavras`);
       fs.writeFileSync(cache, JSON.stringify(j.words || []));
     }
-    for (const w of JSON.parse(fs.readFileSync(cache))) for (const p of norm(w.word)) ouv.push({ p, t: +(w.start + a).toFixed(2) });
-  }
+    return JSON.parse(fs.readFileSync(cache)).flatMap(w => norm(w.word).map(p => ({ p, t: +(w.start + a).toFixed(2) })));
+  };
+  const ouv = [];
+  for (const [i, a] of cortes.entries()) ouv.push(...await ouveTrecho(a, cortes[i + 1] ?? total, path.join(tmp, `palavras-${total}-${a}.json`)));
   if (!ouv.length) throw new Error('transcrição sem tempos por palavra');
+  // a transcrição às vezes perde um trecho e carimba as palavras que sobraram no começo dele; a fala não para mais que ~1,5 s, então ouve o trecho de novo, sozinho
+  const tentadas = new Set(); // cada volta encolhe a lacuna, porque a nova transcrição também pode pular parte dela
+  for (let lacunas; (lacunas = ouv.flatMap((x, i) => { const b = ouv[i + 1]?.t ?? total; return b - x.t > 3 && !tentadas.has(x.t) ? [[i + 1, x.t, b]] : []; })).length;) {
+    for (const [i, a, b] of lacunas.reverse()) {
+      tentadas.add(a);
+      const novas = await ouveTrecho(a, b, path.join(tmp, `lacuna-${total}-${a}.json`));
+      if (!novas.length) console.log(`ATENÇÃO: trecho de ${a}s a ${b}s sem transcrição; a sincronia dele pode estar errada`);
+      ouv.splice(i, 0, ...novas);
+    }
+  }
   const esp = itens.flatMap((it, k) => it.fala.split(/\s+/).flatMap((w, wi) => norm(w).map(p => ({ p, k, wi }))));
   const tempoDe = {}, tPal = {};
   for (const [i, jj] of alinha(esp.map(x => x.p), ouv.map(x => x.p))) {
