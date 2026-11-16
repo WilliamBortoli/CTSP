@@ -356,6 +356,9 @@ function stats(){
   return {ok, tot, pm, seq, pontos, fraca, ult: D.sims[0], dom, minutos: Math.round(D.sims.reduce((a, s) => a + (s.seg || 0), 0) / 60)};
 }
 function semanaAtual(){ const d = hoje(); return C.plano.find(p => d >= p.ini && d <= p.fim) || (d < (C.plano[0] || {}).ini ? C.plano[0] : C.plano[C.plano.length - 1]); }
+// tópicos das semanas que já passaram e ainda não foram dominados, sem repetir
+function atrasados(){ const d = hoje(); return [...new Set(C.plano.filter(p => p.fim < d).flatMap(p => p.t))].filter(t => TOP[t] && !D.dom[t]); }
+const nAtraso = n => n + (n === 1 ? ' tópico atrasado' : ' tópicos atrasados') + ' das semanas anteriores';
 function revisoes(){
   const d = hoje(), out = [];
   Object.keys(D.dom).forEach(tid => { if (!TOP[tid]) return; const st = (D.revs[tid] || []).length; if (st >= 3) return; if (d >= somaDias(D.dom[tid], [1, 7, 30][st])) out.push({tid, st}); });
@@ -367,7 +370,7 @@ const missao = (feito, c, i, t, sub, attrs) => '<button class="mi' + (feito ? ' 
 function anel(n){ const off = 314 - 314 * Math.min(60, n) / 60; return '<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="gr"><stop offset="0" stop-color="#DEB252"/><stop offset="1" stop-color="#F4D78C"/></linearGradient></defs><circle cx="60" cy="60" r="50" stroke="rgba(222,190,120,.12)" stroke-width="10" fill="none"/><circle cx="60" cy="60" r="50" stroke="url(#gr)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="' + off + '" transform="rotate(-90 60 60)"/></svg><b>' + (n ? n + '/60' : '—') + '<small>último</small></b></div>'; }
 function cardMat(m, s){
   const st = s.pm[m.id], a = pct(st.ok, st.tot), [bg, fg] = COR[m.cor], dom = m.tops.filter(t => D.dom[t.id]).length;
-  return '<button class="mat" data-mat="' + m.id + '"><span class="w' + (m.q > 8 ? ' hot' : '') + '">' + m.q + ' na prova</span><svg class="ill" viewBox="0 0 58 58" style="color:' + fg + '" aria-hidden="true"><rect width="58" height="58" rx="16" fill="' + bg + '"/>' + m.ico + '</svg><b>' + esc(m.nomeCurto) + '</b><div class="bar' + (st.tot && a < 75 ? ' red' : '') + '"><i style="width:' + (st.tot ? a : 0) + '%"></i></div><div class="meta"><span>' + dom + '/' + m.tops.length + ' tópicos</span><span>' + (st.tot ? a + '% acerto' : 'sem questões') + '</span></div></button>';
+  return '<button class="mat" data-mat="' + m.id + '"><span class="w' + (m.q > 8 ? ' hot' : '') + '">' + m.q + ' na prova</span><svg class="ill" viewBox="0 0 58 58" style="color:' + fg + '" aria-hidden="true"><rect width="58" height="58" rx="16" fill="' + bg + '"/>' + m.ico + '</svg><b>' + esc(m.nomeCurto) + '</b><div class="bar' + (st.tot && a < 75 ? ' red' : '') + '"><i style="width:' + (st.tot ? a : 0) + '%"></i></div><div class="meta"><span>' + dom + '/' + m.tops.length + ' tópicos</span><span>' + (st.tot ? a + '% acerto' : 'nenhuma respondida') + '</span></div></button>';
 }
 
 /* ---- painel ---- */
@@ -387,12 +390,12 @@ function rPainel(){
   '<div class="kpis">' + kpi('gold', 'target', s.tot ? ac + '%' : '—', 'acerto geral · meta 90%') + kpi('red', 'flame', s.seq + (s.seq === 1 ? ' dia' : ' dias'), 'seguidos estudando') +
     kpi('blue', 'book', s.dom + '/' + Object.keys(TOP).length, 'tópicos dominados') + kpi('green', 'medal', D.sims.length, D.sims.length === 1 ? 'simulado feito' : 'simulados feitos') + '</div>' +
   '<div class="grid"><div class="pnl"><div class="ph2"><h3>' + ic('check') + 'Missão de hoje</h3></div><div class="mis">' +
-    (w ? missao(wt.length && wd === wt.length, 'c-gold', 'cal', 'Semana ' + w.s + ' do plano' + (wt.length ? ': ' + wd + ' de ' + wt.length + ' tópicos' : ''), w.txt || 'Estude os tópicos desta semana', 'data-tab="plano"') : '') +
+    (w ? missao(wt.length && wd === wt.length, 'c-gold', 'cal', 'Semana ' + w.s + ' do plano' + (wt.length ? ': ' + wd + ' de ' + wt.length + ' tópicos' : ''), atrasados().length ? nAtraso(atrasados().length) : w.txt || 'Estude os tópicos desta semana', 'data-tab="plano"') : '') +
     missao(!rv.length, 'c-blue', 'repeat', rv.length ? 'Revisar ' + rv.length + (rv.length === 1 ? ' tópico' : ' tópicos') + ' hoje' : 'Revisões em dia', rv.length ? 'Revisão espaçada: 1, 7 e 30 dias depois de dominar' : 'Marque tópicos como dominados nas apostilas', rv.length ? 'data-topico="' + rv[0].tid + '" data-rev="1"' : 'data-tab="materias"') +
     missao(D.sims.some(x => x.d === hoje()), 'c-gold', 'target', '10 questões · ' + s.fraca.nomeCurto, 'Simulado focado na matéria mais fraca', 'data-praticar="fraca"') +
     missao(!D.erros.length, 'c-red', 'alert', D.erros.length ? 'Refazer ' + D.erros.length + ' questões do caderno de erros' : 'Caderno de erros em dia', D.erros.length ? 'Questões que você errou' : 'Nenhuma questão pendente', 'data-tab="erros"') + '</div></div>' +
   '<div class="pnl"><div class="ph2"><h3>' + ic('chart') + 'Rumo ao corte</h3></div>' + (!s.ult ? '<p style="margin:0;color:var(--ink2)">O corte de 2026 foi 52 de 60. Faça um simulado para o portal projetar a sua nota.</p><button class="btn gold" data-praticar="rapido">' + ic('play') + 'Fazer meu primeiro simulado (10 questões)</button></div></div>' : '<div class="goal">' + anel(ultNota) +
-    '<ul><li>' + ic(ultNota >= 52 ? 'check' : 'alert', 'color:var(--' + (ultNota >= 52 ? 'green' : 'red') + ')') + (s.ult ? (ultNota >= 52 ? 'Acima da nota de corte de 2026 (52)' : 'Faltam ' + (52 - ultNota) + ' para o corte de 2026 (52)') : 'Faça um simulado para medir') + '</li><li>' + ic('target', 'color:var(--gold)') + 'Meta: 54 a 57 de 60</li><li>' + ic('list', 'color:var(--blue)') + 'Projeção sobre 60 questões</li></ul></div>' +
+    '<ul><li>' + ic(ultNota >= 52 ? 'check' : 'alert', 'color:var(--' + (ultNota >= 52 ? 'green' : 'red') + ')') + (s.ult ? (ultNota >= 52 ? 'Acima da nota de corte de 2026 (52)' : 'Faltam ' + (52 - ultNota) + ' para o corte de 2026 (52)') : 'Faça um simulado para medir') + '</li><li>' + ic('target', 'color:var(--gold)') + 'Meta: 54 a 57 de 60</li><li>' + ic('list', 'color:var(--blue)') + (s.ult.tot >= 60 ? 'Nota da prova completa' : 'Estimativa: o último simulado teve só ' + s.ult.tot + ' questões. A prova completa mede melhor') + '</li></ul></div>' +
     '<div class="hist">' + (D.sims.length ? D.sims.slice(0, 4).map(x => '<div class="hrow"><b>' + esc(x.nome) + '</b><span class="n" style="color:var(--' + (pct(x.ok, x.tot) >= 80 ? 'green' : 'red') + ')">' + x.ok + '/' + x.tot + '</span><span class="hint">' + dm(x.d) + '</span></div>').join('') : '<div class="empty">Seus simulados aparecem aqui.</div>') + '</div></div></div>') +
   '<div class="pnl"><div class="ph2"><h3>' + ic('medal') + 'Ranking da semana</h3><span class="hint">questões + 2 × acertos</span></div><div class="hist" id="rank-l"><div class="empty">Carregando…</div></div></div>' +
   '<div class="pnl"><div class="ph2"><h3>' + ic('book') + 'Suas matérias</h3><button class="link" data-tab="materias">Abrir todas</button></div><div class="mats">' + MATS.map(m => cardMat(m, s)).join('') + '</div></div>';
@@ -412,13 +415,14 @@ async function rRanking(){
 
 /* ---- plano ---- */
 function rPlano(){
-  const d = hoje(), w = semanaAtual();
+  const d = hoje(), w = semanaAtual(), atr = atrasados();
   const fases = [['Diagnóstico', '26/10 a 08/11', '2026-10-26', '2026-11-08'], ['Base', '09/11 a 28/02', '2026-11-09', '2027-02-28'], ['Aprofundamento', '01/03 a 04/04', '2027-03-01', '2027-04-04'], ['Reta final', '05/04 até a prova', '2027-04-05', '2027-06-13']];
   const chip = tid => { const t = TOP[tid]; if (!t) return ''; return '<button class="chip' + (D.dom[tid] ? ' ok' : '') + '" data-topico="' + tid + '">' + (D.dom[tid] ? '✓ ' : '') + esc(NOMES[t.mat] || t.mat) + ' · ' + esc(t.nome) + '</button>'; };
   $('#main').innerHTML = mtop() + '<div class="pghead"><div class="k">Projeto de estudo · out/2026 a jun/2027</div><h1>Plano <em>semanal</em></h1><p>Cada semana tem os seus tópicos. Toque num tópico para abrir a apostila naquele ponto; marque "Dominei" ao terminar.</p></div>' +
     '<div class="fases">' + fases.map(f => '<div class="fase' + (d >= f[2] && d <= f[3] ? ' on' : '') + '"><b>' + f[0] + '</b>' + f[1] + '</div>').join('') + '</div>' +
     '<div class="semanas">' + C.plano.map(p => { const agora = p === w, ts = p.t.filter(t => TOP[t]), dd = ts.filter(t => D.dom[t]).length;
       return '<div class="sem' + (agora ? ' agora' : '') + (p.fim < d && !agora ? ' passou' : '') + '"><div class="top"><b>Semana ' + esc(p.s) + (agora ? ' · agora' : '') + '</b><span>' + dm(p.ini) + ' a ' + dm(p.fim) + ' · ' + esc(p.tipo) + (ts.length ? ' · ' + dd + '/' + ts.length : '') + '</span></div>' +
+        (agora && atr.length ? '<p><b>' + nAtraso(atr.length) + '.</b> Comece por eles:</p><div class="chips">' + atr.map(chip).join('') + '</div>' + (ts.length ? '<p><b>Desta semana:</b></p>' : '') : '') +
         (p.txt ? '<p>' + esc(p.txt) + '</p>' : '') + (ts.length ? '<div class="chips">' + ts.map(chip).join('') + '</div>' : '') +
         (p.m.length ? '<div class="chips">' + p.m.map(m => '<button class="chip" data-praticar="' + m + '">' + ic('target') + 'Treinar ' + esc(NOMES[m] || m) + '</button>').join('') + '</div>' : '') +
         (p.links.length ? '<div class="chips">' + (p.links.some(l => /^Prova CTSP\/2026/.test(l[0])) ? '<button class="chip" data-praticar="real2026">' + ic('target') + 'Fazer a prova 2026 aqui (4h, corrige sozinho)</button>' : '') + p.links.map(l => '<a class="chip" href="' + esc(l[1]) + '" target="_blank" rel="noopener">' + ic('link') + esc(l[0]) + '</a>').join('') + '</div>' : '') + '</div>'; }).join('') + '</div>';
@@ -714,7 +718,7 @@ function pintarAlunos(){
 }
 function detalheAluno(u, r){
   return '<div class="det"><b>' + esc(tituloDe(u)) + '</b>' + (u.nome ? '<span class="hint">' + esc(u.nome) + '</span>' : '') +
-    MATS.map(m => { const p = r.pm[m.id] || [0, 0], a = pct(p[0], p[1]); return '<div class="mbar"><span>' + esc(m.nomeCurto) + '</span><span>' + (p[1] ? a + '% · ' + p[1] + ' questões' : 'sem questões') + '</span><div class="bar' + (p[1] && a < 75 ? ' red' : '') + '"><i style="width:' + (p[1] ? a : 0) + '%"></i></div></div>'; }).join('') +
+    MATS.map(m => { const p = r.pm[m.id] || [0, 0], a = pct(p[0], p[1]); return '<div class="mbar"><span>' + esc(m.nomeCurto) + '</span><span>' + (p[1] ? a + '% · ' + p[1] + ' questões' : 'nenhuma respondida') + '</span><div class="bar' + (p[1] && a < 75 ? ' red' : '') + '"><i style="width:' + (p[1] ? a : 0) + '%"></i></div></div>'; }).join('') +
     '<div class="hist">' + (r.d.sims.slice(0, 5).map(x => '<div class="hrow"><b>' + esc(x.nome) + '</b><span class="n">' + x.ok + '/' + x.tot + '</span><span class="hint">' + dm(x.d) + '</span></div>').join('') || '<div class="empty">Nenhum simulado ainda.</div>') + '</div></div>';
 }
 function novoAluno(){
